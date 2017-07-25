@@ -29,12 +29,6 @@ public class GameManager : MonoBehaviour {
         boardScript.SetupScene();
 	}
 
-    void OnMouseDown()
-    {
-        print("does the thing");
-        computer.DoTheThing();
-    }
-
     public void GameOver()
     {
         enabled = false;

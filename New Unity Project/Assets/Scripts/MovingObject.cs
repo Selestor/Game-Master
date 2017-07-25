@@ -20,8 +20,9 @@ public abstract class MovingObject : MonoBehaviour {
 
 	}
 	
-    protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
+    protected void Move (Vector3 end)
     {
+        /*
         Vector2 start = transform.position;
         Vector2 end = start + new Vector2(xDir, yDir);
 
@@ -35,6 +36,8 @@ public abstract class MovingObject : MonoBehaviour {
             return true;
         }
         return false;
+        */
+        StartCoroutine(SmoothMovement(end));
     }
 
     protected IEnumerator SmoothMovement(Vector3 end)

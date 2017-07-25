@@ -8,6 +8,8 @@ public class Player : MovingObject {
     public int healthPoints = 8;
     public int moveRange = 6;
 
+    private APathAlgorythm movingAlgorythm;
+
     //private Animator animator;
 	// Use this for initialization
 	protected override void Start () {
@@ -19,44 +21,34 @@ public class Player : MovingObject {
         //tutaj jakby cos sie zmienialo, np poziom gry
     }
     
-    void Update () {
-        if (!GameManager.instance.playersTurn) return;
-
-        int horizontal = 0;
-        int vertical = 0;
-
-        horizontal = (int)Input.GetAxisRaw("Horizontal");
-        vertical = (int)Input.GetAxisRaw("Vertical");
-
-        if (Input.GetMouseButtonDown(0))
+    void Update ()
+    {
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
+            movingAlgorythm = gameObject.AddComponent(typeof(APathAlgorythm)) as APathAlgorythm;
+            Vector3 end = GameManager.instance.mousePosition;
             List<Vector3> shortestPath = new List<Vector3>();
-            Vector3 mousePosition = GameManager.instance.mousePosition;
-            shortestPath = GameManager.instance.shortestPath;
+            shortestPath = movingAlgorythm.ReturnShortestPath(transform.position, end);
 
-            foreach (Vector3 posVec in shortestPath)
-            {
-                float x = Mathf.RoundToInt(posVec.x) - transform.position.x;
-                float y = Mathf.RoundToInt(posVec.y) - transform.position.y;
-                if (Mathf.Abs(x) > Mathf.Abs(y))
-                {
-                    horizontal = x > 0 ? 1 : -1;
+            shortestPath = Reverse(shortestPath);
 
-                }
-                else
-                {
-                    vertical = y > 0 ? 1 : -1;
-                }
+            foreach (Vector3 step in shortestPath)
+             {
+                Move(step);
             }
+            //Move(end);
         }
+    }
 
-        if (horizontal != 0)
-            vertical = 0;
+    List<Vector3> Reverse(List<Vector3> list)
+    {
+        List<Vector3> reversedList = new List<Vector3>();
 
-        RaycastHit2D hit;
-        if (horizontal != 0 || vertical != 0)
-            Move(horizontal, vertical, out hit);
-	}
+        for (int i = list.Count - 1; i > 0; i--)
+            reversedList.Add(list[i]);
+
+        return reversedList;
+    }
 
     private void CheckIfGameOver()
     {

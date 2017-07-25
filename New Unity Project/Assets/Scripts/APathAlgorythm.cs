@@ -7,26 +7,40 @@ public class APathAlgorythm : MonoBehaviour {
     private int columns;
     private int rows;
 
-    private float[,] pathScoring;
-    private List<Vector3> openList = new List<Vector3>();
-    private List<Vector3> closedList = new List<Vector3>();
+    private Vector3 startingPosition;
+    private Vector3 destination;
 
-    public void DoTheThing()
+    private Vector3[,] pathScoring;
+    private List<Vector3> openList;
+    private List<Vector3> closedList;
+    private List<Vector3> shortestPath;
+
+    public List<Vector3> ReturnShortestPath(Vector3 begining, Vector3 end)
     {
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
-                pathScoring[x, y] = 0;
-        CalculateShortestPath(GameManager.instance.playerPosition, GameManager.instance.mousePosition);
-        GameManager.instance.shortestPath = closedList;
+        List<Vector3> SP = new List<Vector3>();
+
+        columns = GameManager.instance.GetComponent<BoardManager>().columns;
+        rows = GameManager.instance.GetComponent<BoardManager>().rows;
+        closedList = new List<Vector3>();
+        openList = new List<Vector3>();
+        pathScoring = new Vector3[columns, rows];
+
+        int xDir = Mathf.RoundToInt(begining.x);
+        int yDir = Mathf.RoundToInt(begining.y);
+
+        startingPosition = begining;
+        destination = end;
+
+        CalculateShortestPath(begining, end);
+        SP = closedList;
+
+        return SP;
     }
 
     private void CalculateShortestPath(Vector3 begining, Vector3 end)
     {
-        columns = GameManager.instance.GetComponent<BoardManager>().columns;
-        rows = GameManager.instance.GetComponent<BoardManager>().rows;
-
         closedList.Add(begining);
-        AddAdjecentToList(openList, begining);
+        AddAdjecentToOpenList(begining, end);
 
         int[] coordinates = LowestScoreIndex(pathScoring);
         int x = coordinates[0];
@@ -34,14 +48,20 @@ public class APathAlgorythm : MonoBehaviour {
 
         Vector3 S = new Vector3(x, y);
         openList.Remove(S);
-        closedList.Add(S);
 
         if (S != end) CalculateShortestPath(S, end);
+        else
+        {
+            closedList.Add(S);
+            //TraceSteps();
+        }
     }
 
+    private void TraceSteps()
+    {
+    }
 
-
-    private void AddAdjecentToList(List<Vector3> list,Vector3 current)
+    private void AddAdjecentToOpenList(Vector3 current, Vector3 target)
     {
         Vector3 offset;
         for (int i = 0; i < 4; i++)
@@ -51,25 +71,26 @@ public class APathAlgorythm : MonoBehaviour {
             else if (i == 2) offset = new Vector3(0, 1, 0);
             else if (i == 3) offset = new Vector3(0, -1, 0); 
             Vector3 adjecent = current + offset;
-            if (adjecent.x > 0 && adjecent.x < columns && adjecent.y > 0 && adjecent.y < rows)
+
+            if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows)
             {
                 if (!closedList.Contains(adjecent))
                 {
-                    float F;
-                    F = CalculatePathScore(current, adjecent);
+                    Vector3 score = new Vector3();
+                    score = CalculatePathScore(adjecent, current);
                     if (!openList.Contains(adjecent))
                     {
-                        list.Add(adjecent);
-                        pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = F;
+                        openList.Add(adjecent);
+                        pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = score;
                     }
                     else
                     {
-                        float oldF = pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)];
-                        if (F < oldF)
+                        float oldF = pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)].x;
+                        if (score.x < oldF)
                         {
-                            list.Remove(adjecent);
-                            list.Add(adjecent);
-                            pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = F;
+                            openList.Remove(adjecent);
+                            openList.Add(adjecent);
+                            pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = score;
                         }
                     }
                 }
@@ -77,31 +98,37 @@ public class APathAlgorythm : MonoBehaviour {
         }
     }
 
-    private float CalculatePathScore(Vector3 current, Vector3 adjecent)
+    private Vector3 CalculatePathScore(Vector3 field, Vector3 previous)
     {
-        float G = pathScoring[Mathf.RoundToInt(current.x), Mathf.RoundToInt(current.y)] + 1;
-        float H = Mathf.Abs(closedList[(closedList.Count - 1)].x - adjecent.x) + Mathf.Abs(closedList[(closedList.Count - 1)].y - adjecent.y);
-        float F = G + H;
-        return F;
+        int x = Mathf.RoundToInt(previous.x);
+        int y = Mathf.RoundToInt(previous.y);
+
+        float G = pathScoring[x, y].y + 1;
+        float H = Mathf.Abs(destination.x - field.x) + Mathf.Abs(destination.y - field.y); 
+        float F = Mathf.RoundToInt(G + H);
+        Vector3 score = new Vector3();
+        score.x = F;
+        score.y = G;
+        score.z = H;
+        return score;
     }
 
-    private int[] LowestScoreIndex(float[,] scoreBoard)
+    private int[] LowestScoreIndex(Vector3[,] scoreBoard)
     {
         int[] lowestScoreIndex = new int[2];
-        float min = scoreBoard[0, 0];
+        float min = scoreBoard[Mathf.RoundToInt(openList[openList.Count - 1].x), Mathf.RoundToInt(openList[openList.Count - 1].y)].x;
+        lowestScoreIndex[0] = Mathf.RoundToInt(openList[openList.Count - 1].x);
+        lowestScoreIndex[1] = Mathf.RoundToInt(openList[openList.Count - 1].y);
 
-        int x = Mathf.RoundToInt(Mathf.Sqrt(scoreBoard.Length));
-        
-        for (int i = 0; i < x; i++)
-            for (int j = 0; j< x; j++)
+        foreach (Vector3 field in openList)
+        {
+            if (scoreBoard[Mathf.RoundToInt(field.x), Mathf.RoundToInt(field.y)].x < min)
             {
-                if ( min > scoreBoard[i, j])
-                {
-                    min = scoreBoard[i, j];
-                    lowestScoreIndex[0] = i;
-                    lowestScoreIndex[1] = j;
-                }
+                min = scoreBoard[Mathf.RoundToInt(field.x), Mathf.RoundToInt(field.y)].x;
+                lowestScoreIndex[0] = Mathf.RoundToInt(field.x);
+                lowestScoreIndex[1] = Mathf.RoundToInt(field.y);
             }
+        }
 
         return lowestScoreIndex;
     }
