@@ -14,6 +14,73 @@ public class APathAlgorythm : MonoBehaviour {
     private List<Vector3> openList;
     private List<Vector3> closedList;
     private List<Vector3> shortestPath;
+    private TreeNode<Vector3> treeRoot;
+
+    class TreeNode<Vector3>
+    {
+        public Vector3 node;
+
+        private TreeNode<Vector3> parent;
+        private List<TreeNode<Vector3>> children;
+
+        public TreeNode()
+        {
+            parent = null;
+            node = default(Vector3);
+            children = new List<TreeNode<Vector3>>();
+        }
+
+        public void SetParent(TreeNode<Vector3> parent)
+        {
+            this.parent = parent;
+        }
+
+        public TreeNode<Vector3> GetParent()
+        {
+            return this.parent;
+        }
+
+        public void AddChild(TreeNode<Vector3> child)
+        {
+            children.Add(child);
+            child.parent = this;
+        }
+
+        public TreeNode<Vector3> FindChild(Vector3 child)
+        {
+            TreeNode<Vector3> searchedChild = new TreeNode<Vector3>();
+
+            if (this.node.Equals(child)) searchedChild = this;
+            else
+            {
+                foreach (TreeNode<Vector3> nodeChild in this.children)
+                {
+                    searchedChild = nodeChild.FindChild(child);
+                    if (searchedChild.node.Equals(child)) return searchedChild;
+                }
+            }
+            return searchedChild;
+        }
+
+    }
+
+/*    class Tree
+    {
+        private TreeNode<Vector3> root;
+        private List<TreeNode<Vector3>> children;
+
+        public Tree(TreeNode<Vector3> root)
+        {
+            this.root = root;
+            children = new List<TreeNode<Vector3>>();
+        }
+
+        public void GrowTree(Vector3 node, TreeNode<Vector3> child) // dodaj child do node
+        {
+            TreeNode<Vector3> searchedNode = root.FindChild(node);
+            searchedNode.AddChild(child);
+        }
+    }*/
 
     public List<Vector3> ReturnShortestPath(Vector3 begining, Vector3 end)
     {
@@ -25,14 +92,24 @@ public class APathAlgorythm : MonoBehaviour {
         openList = new List<Vector3>();
         pathScoring = new Vector3[columns, rows];
 
-        int xDir = Mathf.RoundToInt(begining.x);
-        int yDir = Mathf.RoundToInt(begining.y);
+        treeRoot = new TreeNode<Vector3>();
+        treeRoot.node = begining;
+
+        //int xDir = Mathf.RoundToInt(begining.x);
+        //int yDir = Mathf.RoundToInt(begining.y);
 
         startingPosition = begining;
         destination = end;
 
         CalculateShortestPath(begining, end);
-        SP = closedList;
+
+        TreeNode<Vector3> bottom = treeRoot.FindChild(end);
+        SP.Add(bottom.node);
+        while (bottom.GetParent() != null)
+        {
+            bottom = bottom.GetParent();
+            SP.Add(bottom.node);
+        }
 
         return SP;
     }
@@ -52,13 +129,12 @@ public class APathAlgorythm : MonoBehaviour {
         if (S != end) CalculateShortestPath(S, end);
         else
         {
+            TreeNode<Vector3> lastNode = new TreeNode<Vector3>();
+            lastNode.node = S;
+            lastNode.SetParent(treeRoot.FindChild(begining));
+            treeRoot.FindChild(begining).AddChild(lastNode);
             closedList.Add(S);
-            //TraceSteps();
         }
-    }
-
-    private void TraceSteps()
-    {
     }
 
     private void AddAdjecentToOpenList(Vector3 current, Vector3 target)
@@ -74,6 +150,11 @@ public class APathAlgorythm : MonoBehaviour {
 
             if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows)
             {
+                TreeNode<Vector3> child = new TreeNode<Vector3>();
+                child.node = adjecent;
+                child.SetParent(treeRoot.FindChild(current));
+                treeRoot.FindChild(current).AddChild(child);
+
                 if (!closedList.Contains(adjecent))
                 {
                     Vector3 score = new Vector3();

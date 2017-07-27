@@ -20,7 +20,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 	}
 	
-    protected void Move (Vector3 end)
+    protected void Move (List<Vector3> path)
     {
         /*
         Vector2 start = transform.position;
@@ -37,19 +37,23 @@ public abstract class MovingObject : MonoBehaviour {
         }
         return false;
         */
-        StartCoroutine(SmoothMovement(end));
+
+        StartCoroutine(SmoothMovement(path));
     }
 
-    protected IEnumerator SmoothMovement(Vector3 end)
+    protected IEnumerator SmoothMovement(List<Vector3> path)
     {
-        float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-
-        while (sqrRemainingDistance > float.Epsilon)
+        foreach (Vector3 step in path)
         {
-            Vector3 newPosition = Vector3.MoveTowards(rb2D.position, end, inverseMoveTime * Time.deltaTime);
-            rb2D.MovePosition(newPosition);
-            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-            yield return null;
+            float sqrRemainingDistance = (transform.position - step).sqrMagnitude;
+
+            while (sqrRemainingDistance > float.Epsilon)
+            {
+                Vector3 newPosition = Vector3.MoveTowards(rb2D.position, step, inverseMoveTime * Time.deltaTime);
+                rb2D.MovePosition(newPosition);
+                sqrRemainingDistance = (transform.position - step).sqrMagnitude;
+                yield return null;
+            }
         }
     }
 }

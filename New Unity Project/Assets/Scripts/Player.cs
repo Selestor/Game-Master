@@ -32,11 +32,7 @@ public class Player : MovingObject {
 
             shortestPath = Reverse(shortestPath);
 
-            foreach (Vector3 step in shortestPath)
-             {
-                Move(step);
-            }
-            //Move(end);
+            Move(shortestPath);
         }
     }
 
@@ -44,7 +40,7 @@ public class Player : MovingObject {
     {
         List<Vector3> reversedList = new List<Vector3>();
 
-        for (int i = list.Count - 1; i > 0; i--)
+        for (int i = list.Count - 1; i >= 0; i--)
             reversedList.Add(list[i]);
 
         return reversedList;
