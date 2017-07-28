@@ -13,7 +13,6 @@ public class APathAlgorythm : MonoBehaviour {
     private Vector3[,] pathScoring;
     private List<Vector3> openList;
     private List<Vector3> closedList;
-    private List<Vector3> shortestPath;
     private TreeNode<Vector3> treeRoot;
 
     class TreeNode<Vector3>
@@ -64,23 +63,6 @@ public class APathAlgorythm : MonoBehaviour {
 
     }
 
-/*    class Tree
-    {
-        private TreeNode<Vector3> root;
-        private List<TreeNode<Vector3>> children;
-
-        public Tree(TreeNode<Vector3> root)
-        {
-            this.root = root;
-            children = new List<TreeNode<Vector3>>();
-        }
-
-        public void GrowTree(Vector3 node, TreeNode<Vector3> child) // dodaj child do node
-        {
-            TreeNode<Vector3> searchedNode = root.FindChild(node);
-            searchedNode.AddChild(child);
-        }
-    }*/
 
     public List<Vector3> ReturnShortestPath(Vector3 begining, Vector3 end)
     {
@@ -94,9 +76,6 @@ public class APathAlgorythm : MonoBehaviour {
 
         treeRoot = new TreeNode<Vector3>();
         treeRoot.node = begining;
-
-        //int xDir = Mathf.RoundToInt(begining.x);
-        //int yDir = Mathf.RoundToInt(begining.y);
 
         startingPosition = begining;
         destination = end;
@@ -148,7 +127,10 @@ public class APathAlgorythm : MonoBehaviour {
             else if (i == 3) offset = new Vector3(0, -1, 0); 
             Vector3 adjecent = current + offset;
 
-            if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows)
+            RaycastHit2D hit = Physics2D.Linecast(transform.position, adjecent, gameObject.layer);
+            Debug.DrawRay(current, offset , Color.green, 2);
+
+            if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows && hit.transform == null)
             {
                 TreeNode<Vector3> child = new TreeNode<Vector3>();
                 child.node = adjecent;

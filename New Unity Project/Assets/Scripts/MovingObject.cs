@@ -11,16 +11,19 @@ public abstract class MovingObject : MonoBehaviour {
     private Rigidbody2D rb2D;
     private float inverseMoveTime;
 
-	// Use this for initialization
-	protected virtual void Start () {
+    private APathAlgorythm movingAlgorythm;
+
+    // Use this for initialization
+    protected virtual void Start () {
 
         boxCollider = GetComponent<BoxCollider2D>();
         rb2D = GetComponent<Rigidbody2D>();
         inverseMoveTime = 1f / moveTime;
+        movingAlgorythm = gameObject.AddComponent(typeof(APathAlgorythm)) as APathAlgorythm;
 
-	}
+    }
 	
-    protected void Move (List<Vector3> path)
+    protected void Move (Vector3 start, Vector3 end)
     {
         /*
         Vector2 start = transform.position;
@@ -37,8 +40,15 @@ public abstract class MovingObject : MonoBehaviour {
         }
         return false;
         */
+        List<Vector3> shortestPath = new List<Vector3>();
 
-        StartCoroutine(SmoothMovement(path));
+        boxCollider.enabled = false;
+        shortestPath = movingAlgorythm.ReturnShortestPath(start, end);
+        boxCollider.enabled = true;
+
+        shortestPath = Reverse(shortestPath);
+
+        StartCoroutine(SmoothMovement(shortestPath));
     }
 
     protected IEnumerator SmoothMovement(List<Vector3> path)
@@ -55,5 +65,17 @@ public abstract class MovingObject : MonoBehaviour {
                 yield return null;
             }
         }
+
+        
+    }
+
+    List<Vector3> Reverse(List<Vector3> list)
+    {
+        List<Vector3> reversedList = new List<Vector3>();
+
+        for (int i = list.Count - 1; i >= 0; i--)
+            reversedList.Add(list[i]);
+
+        return reversedList;
     }
 }

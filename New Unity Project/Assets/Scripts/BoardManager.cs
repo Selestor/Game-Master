@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour {
     public GameObject[] floorTiles;
     public GameObject highlightTile;
     public GameObject outerWall;
-
+    public GameObject[] obstacle;
 
     private Transform boardHolder;
     private List<Vector3> gridPositions = new List<Vector3>();
@@ -20,8 +20,8 @@ public class BoardManager : MonoBehaviour {
     void InitializeList()
     {
         gridPositions.Clear();
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
+        for (int x = 1; x < columns - 1; x++)
+            for (int y = 1; y < rows - 1; y++)
             {
                 gridPositions.Add(new Vector3(x, y, 0f));
             }
@@ -51,5 +51,27 @@ public class BoardManager : MonoBehaviour {
     {
         BoardSetup();
         InitializeList();
+        LayoutObjectAtRandom(obstacle, 6, 10);
+    }
+
+    // random object on scene
+    Vector3 RandomPosition()
+    {
+        int randomIndex = Random.Range(0, gridPositions.Count);
+        Vector3 randomPosition = gridPositions[randomIndex];
+        gridPositions.RemoveAt(randomIndex);
+
+        return randomPosition;
+    }
+
+    void LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum)
+    {
+        int objectCount = Random.Range(minimum, maximum + 1);
+        for (int i = 0; i < objectCount; i++)
+        {
+            Vector3 randomPosition = RandomPosition();
+            GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
+            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+        }
     }
 }
