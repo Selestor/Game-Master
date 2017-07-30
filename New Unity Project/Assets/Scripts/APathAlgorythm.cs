@@ -127,8 +127,8 @@ public class APathAlgorythm : MonoBehaviour {
             else if (i == 3) offset = new Vector3(0, -1, 0); 
             Vector3 adjecent = current + offset;
 
-            RaycastHit2D hit = Physics2D.Linecast(transform.position, adjecent, gameObject.layer);
-            Debug.DrawRay(current, offset , Color.green, 2);
+            int layerMask = 1 << 8;
+            RaycastHit2D hit = Physics2D.Linecast(current, adjecent, layerMask);
 
             if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows && hit.transform == null)
             {

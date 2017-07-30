@@ -7,6 +7,7 @@ public class CameraMovement : MonoBehaviour {
     public float speed = 5.0f;
     void Update()
     {
+        /* scrolling
         if(Input.GetAxis("Mouse ScrollWheel") > 0f) //scroll down
         {
             if (transform.position.z < -5)
@@ -17,6 +18,7 @@ public class CameraMovement : MonoBehaviour {
             if (transform.position.z > -15)
                 transform.position -= new Vector3(0, 0, 1);
         }
+        */
 
         if (Input.GetKey(KeyCode.RightArrow))
         {

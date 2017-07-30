@@ -6,7 +6,6 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null;
     public BoardManager boardScript;
-    public APathAlgorythm computer;
 
     [HideInInspector]
     public bool playersTurn = true;
@@ -24,7 +23,6 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         boardScript = GetComponent<BoardManager>();
-        computer = GetComponent<APathAlgorythm>();
 
         boardScript.SetupScene();
 	}

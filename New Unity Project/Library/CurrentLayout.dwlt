@@ -308,7 +308,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoom: 0
     m_UniformScale: 1
     m_UpDirection: 1
@@ -368,7 +368,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 1afcffff00000000
+    m_ExpandedIDs: 1cf3ffffbaf3ffffc8f4ffff1afcffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -539,8 +539,8 @@ MonoBehaviour:
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 46260000
-    m_LastClickedID: 9798
+    m_SelectedIDs: 3c260000
+    m_LastClickedID: 9788
     m_ExpandedIDs: 00000000162600001a26000024260000f4260000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -594,8 +594,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 66260000
-    m_LastClickedInstanceID: 9830
+    m_SelectedInstanceIDs: 44260000
+    m_LastClickedInstanceID: 9796
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 2c2600006ceeffffeedbffffb224000002240000bc240000
     m_RenameOverlay:
