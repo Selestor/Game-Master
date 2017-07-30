@@ -80,9 +80,9 @@ public class APathAlgorythm : MonoBehaviour {
         startingPosition = begining;
         destination = end;
 
-        CalculateShortestPath(begining, end);
+        CalculateShortestPath(startingPosition);
 
-        TreeNode<Vector3> bottom = treeRoot.FindChild(end);
+        TreeNode<Vector3> bottom = treeRoot.FindChild(destination);
         SP.Add(bottom.node);
         while (bottom.GetParent() != null)
         {
@@ -93,10 +93,10 @@ public class APathAlgorythm : MonoBehaviour {
         return SP;
     }
 
-    private void CalculateShortestPath(Vector3 begining, Vector3 end)
+    private void CalculateShortestPath(Vector3 begining)
     {
         closedList.Add(begining);
-        AddAdjecentToOpenList(begining, end);
+        AddAdjecentToOpenList(begining);
 
         int[] coordinates = LowestScoreIndex(pathScoring);
         int x = coordinates[0];
@@ -105,7 +105,7 @@ public class APathAlgorythm : MonoBehaviour {
         Vector3 S = new Vector3(x, y);
         openList.Remove(S);
 
-        if (S != end) CalculateShortestPath(S, end);
+        if (S != destination) CalculateShortestPath(S);
         else
         {
             TreeNode<Vector3> lastNode = new TreeNode<Vector3>();
@@ -116,7 +116,7 @@ public class APathAlgorythm : MonoBehaviour {
         }
     }
 
-    private void AddAdjecentToOpenList(Vector3 current, Vector3 target)
+    private void AddAdjecentToOpenList(Vector3 current)
     {
         Vector3 offset;
         for (int i = 0; i < 4; i++)
