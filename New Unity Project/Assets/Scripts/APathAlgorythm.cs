@@ -13,51 +13,52 @@ public class APathAlgorythm : MonoBehaviour {
     private Vector3[,] pathScoring;
     private List<Vector3> openList;
     private List<Vector3> closedList;
-    private TreeNode<Vector3> treeRoot;
+    private TreeNode treeRoot;
 
-    class TreeNode<Vector3>
+    class TreeNode
     {
         public Vector3 node;
 
-        private TreeNode<Vector3> parent;
-        private List<TreeNode<Vector3>> children;
+        private TreeNode parent;
+        private List<TreeNode> children;
 
         public TreeNode()
         {
             parent = null;
             node = default(Vector3);
-            children = new List<TreeNode<Vector3>>();
+            children = new List<TreeNode>();
         }
 
-        public void SetParent(TreeNode<Vector3> parent)
+        public void SetParent(TreeNode parent)
         {
             this.parent = parent;
         }
 
-        public TreeNode<Vector3> GetParent()
+        public TreeNode GetParent()
         {
             return this.parent;
         }
 
-        public void AddChild(TreeNode<Vector3> child)
+        public void AddChild(TreeNode child)
         {
             children.Add(child);
             child.parent = this;
         }
 
-        public TreeNode<Vector3> FindChild(Vector3 child)
+        public TreeNode FindChild(Vector3 child)
         {
-            TreeNode<Vector3> searchedChild = new TreeNode<Vector3>();
+            TreeNode searchedChild = new TreeNode();
 
             if (this.node.Equals(child)) searchedChild = this;
             else
             {
-                foreach (TreeNode<Vector3> nodeChild in this.children)
+                foreach (TreeNode nodeChild in this.children)
                 {
                     searchedChild = nodeChild.FindChild(child);
                     if (searchedChild.node.Equals(child)) return searchedChild;
                 }
             }
+
             return searchedChild;
         }
 
@@ -74,15 +75,21 @@ public class APathAlgorythm : MonoBehaviour {
         openList = new List<Vector3>();
         pathScoring = new Vector3[columns, rows];
 
-        treeRoot = new TreeNode<Vector3>();
+        treeRoot = new TreeNode();
         treeRoot.node = begining;
 
         startingPosition = begining;
         destination = end;
 
-        CalculateShortestPath(startingPosition);
+        openList.Add(startingPosition);
 
-        TreeNode<Vector3> bottom = treeRoot.FindChild(destination);
+        do
+        {
+            CalculateShortestPath(destination);
+        } while (openList.Count >= 1);
+
+        TreeNode bottom = new TreeNode();
+        bottom = treeRoot.FindChild(destination);
         SP.Add(bottom.node);
         while (bottom.GetParent() != null)
         {
@@ -93,82 +100,87 @@ public class APathAlgorythm : MonoBehaviour {
         return SP;
     }
 
-    private void CalculateShortestPath(Vector3 begining)
+    private void CalculateShortestPath(Vector3 end)
     {
-        closedList.Add(begining);
-        AddAdjecentToOpenList(begining);
-
         int[] coordinates = LowestScoreIndex(pathScoring);
         int x = coordinates[0];
         int y = coordinates[1];
+        Vector3 current = new Vector3(x, y);
 
-        Vector3 S = new Vector3(x, y);
-        openList.Remove(S);
+        closedList.Add(current);
+        openList.Remove(current);
 
-        if (S != destination) CalculateShortestPath(S);
-        else
+        if (closedList.Contains(end))
+            return;
+
+        List<Vector3> walkableAdjectentSquares = new List<Vector3>();
+        walkableAdjectentSquares = AdjecentSquares(current);
+
+        foreach (Vector3 square in walkableAdjectentSquares)
         {
-            TreeNode<Vector3> lastNode = new TreeNode<Vector3>();
-            lastNode.node = S;
-            lastNode.SetParent(treeRoot.FindChild(begining));
-            treeRoot.FindChild(begining).AddChild(lastNode);
-            closedList.Add(S);
+            if (closedList.Contains(square))
+                continue;
+            if(!openList.Contains(square))
+            {
+                TreeNode node = new TreeNode();
+                node.node = square;
+                node.SetParent(treeRoot.FindChild(current));
+                treeRoot.FindChild(current).AddChild(node);
+
+                pathScoring[Mathf.RoundToInt(square.x), Mathf.RoundToInt(square.y)] = CalculatePathScore(node);
+
+                openList.Add(square);
+            }
+            else
+            {
+                TreeNode node = new TreeNode();
+                node.node = square;
+                node.SetParent(treeRoot.FindChild(current));
+                treeRoot.FindChild(current).AddChild(node);
+
+                Vector3 newScore = CalculatePathScore(node);
+                if(newScore.y < pathScoring[Mathf.RoundToInt(square.x), Mathf.RoundToInt(square.y)].y)
+                {
+                    treeRoot.FindChild(square).SetParent(treeRoot.FindChild(current));
+                }
+            }
         }
     }
 
-    private void AddAdjecentToOpenList(Vector3 current)
+    private List<Vector3> AdjecentSquares(Vector3 square)
     {
+        List<Vector3> adjecentSquares = new List<Vector3>();
+
         Vector3 offset;
         for (int i = 0; i < 4; i++)
         {
             offset = new Vector3(1, 0, 0);
             if (i == 1) offset = new Vector3(-1, 0, 0);
             else if (i == 2) offset = new Vector3(0, 1, 0);
-            else if (i == 3) offset = new Vector3(0, -1, 0); 
-            Vector3 adjecent = current + offset;
+            else if (i == 3) offset = new Vector3(0, -1, 0);
+            Vector3 adjecent = square + offset;
 
             int layerMask = 1 << 8;
-            RaycastHit2D hit = Physics2D.Linecast(current, adjecent, layerMask);
+            RaycastHit2D hit = Physics2D.Linecast(square, adjecent, layerMask);
 
             if (adjecent.x >= 0 && adjecent.x < columns && adjecent.y >= 0 && adjecent.y < rows && hit.transform == null)
-            {
-                TreeNode<Vector3> child = new TreeNode<Vector3>();
-                child.node = adjecent;
-                child.SetParent(treeRoot.FindChild(current));
-                treeRoot.FindChild(current).AddChild(child);
-
-                if (!closedList.Contains(adjecent))
-                {
-                    Vector3 score = new Vector3();
-                    score = CalculatePathScore(adjecent, current);
-                    if (!openList.Contains(adjecent))
-                    {
-                        openList.Add(adjecent);
-                        pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = score;
-                    }
-                    else
-                    {
-                        float oldF = pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)].x;
-                        if (score.x < oldF)
-                        {
-                            openList.Remove(adjecent);
-                            openList.Add(adjecent);
-                            pathScoring[Mathf.RoundToInt(adjecent.x), Mathf.RoundToInt(adjecent.y)] = score;
-                        }
-                    }
-                }
-            }
-        }
+                adjecentSquares.Add(adjecent);
+         }
+         return adjecentSquares;
     }
 
-    private Vector3 CalculatePathScore(Vector3 field, Vector3 previous)
+    private Vector3 CalculatePathScore(TreeNode treeNode)
     {
-        int x = Mathf.RoundToInt(previous.x);
-        int y = Mathf.RoundToInt(previous.y);
+        int xParent = Mathf.RoundToInt(treeNode.GetParent().node.x);
+        int yParent = Mathf.RoundToInt(treeNode.GetParent().node.y);
 
-        float G = pathScoring[x, y].y + 1;
-        float H = Mathf.Abs(destination.x - field.x) + Mathf.Abs(destination.y - field.y); 
+        int x = Mathf.RoundToInt(treeNode.node.x);
+        int y = Mathf.RoundToInt(treeNode.node.y);
+
+        float G = pathScoring[xParent, yParent].y + 1;
+        float H = Mathf.Abs(destination.x - x) + Mathf.Abs(destination.y - y); 
         float F = Mathf.RoundToInt(G + H);
+
         Vector3 score = new Vector3();
         score.x = F;
         score.y = G;
