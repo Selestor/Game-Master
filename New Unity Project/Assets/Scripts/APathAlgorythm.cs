@@ -25,7 +25,7 @@ public class APathAlgorythm : MonoBehaviour {
         public TreeNode()
         {
             parent = null;
-            node = default(Vector3);
+            node = new Vector3(-9999.0f, -9999.0f, -9999.0f);
             children = new List<TreeNode>();
         }
 
@@ -97,7 +97,7 @@ public class APathAlgorythm : MonoBehaviour {
             SP.Add(bottom.node);
         }
 
-        return SP;
+        return Reverse(SP);
     }
 
     private void CalculateShortestPath(Vector3 end)
@@ -206,5 +206,15 @@ public class APathAlgorythm : MonoBehaviour {
         }
 
         return lowestScoreIndex;
+    }
+
+    List<Vector3> Reverse(List<Vector3> list)
+    {
+        List<Vector3> reversedList = new List<Vector3>();
+
+        for (int i = list.Count - 1; i >= 0; i--)
+            reversedList.Add(list[i]);
+
+        return reversedList;
     }
 }

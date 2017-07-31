@@ -8,6 +8,7 @@ public class Player : MovingObject {
     public int healthPoints = 8;
     public int moveRange = 6;
 
+    private bool canMove = true;
     //private Animator animator;
 	// Use this for initialization
 	protected override void Start () {
@@ -21,13 +22,17 @@ public class Player : MovingObject {
     
     void Update ()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) && canMove)
         {
+            canMove = false;
             Vector3 end = GameManager.instance.mousePosition;
             if (end.x < 0 || end.x > GameManager.instance.boardScript.rows - 1 || end.y < 0 || end.y > GameManager.instance.boardScript.columns - 1 || transform.position == end)
                 return;
             else
+            {
                 Move(transform.position, end);
+            }
+            canMove = true;
         }
     }
 

@@ -30,9 +30,8 @@ public abstract class MovingObject : MonoBehaviour {
         boxCollider.enabled = false;
         shortestPath = movingAlgorythm.ReturnShortestPath(start, end);
         boxCollider.enabled = true;
-
-        shortestPath = Reverse(shortestPath);
-
+        
+        
         StartCoroutine(SmoothMovement(shortestPath));
     }
 
@@ -50,17 +49,5 @@ public abstract class MovingObject : MonoBehaviour {
                 yield return null;
             }
         }
-
-        
-    }
-
-    List<Vector3> Reverse(List<Vector3> list)
-    {
-        List<Vector3> reversedList = new List<Vector3>();
-
-        for (int i = list.Count - 1; i >= 0; i--)
-            reversedList.Add(list[i]);
-
-        return reversedList;
     }
 }

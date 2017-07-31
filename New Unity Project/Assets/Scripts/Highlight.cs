@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Highlight : MonoBehaviour {
-    public LayerMask blockingLayer;
+    public static LayerMask blockingLayer;
 
     void OnMouseEnter()
     {
