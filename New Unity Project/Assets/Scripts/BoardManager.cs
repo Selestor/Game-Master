@@ -51,7 +51,7 @@ public class BoardManager : MonoBehaviour {
     {
         BoardSetup();
         InitializeList();
-        LayoutObjectAtRandom(obstacle, 6, 10);
+        LayoutObjectAtRandom(obstacle, 15, 15);
     }
 
     // random object on scene
