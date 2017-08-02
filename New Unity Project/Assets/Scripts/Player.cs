@@ -22,17 +22,20 @@ public class Player : MovingObject {
     
     void Update ()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) && canMove)
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            canMove = false;
-            Vector3 end = GameManager.instance.mousePosition;
-            if (end.x < 0 || end.x > GameManager.instance.boardScript.rows - 1 || end.y < 0 || end.y > GameManager.instance.boardScript.columns - 1 || transform.position == end)
-                return;
-            else
+            if (canMove && GameManager.instance.boardScript.gridPositions.Contains(GameManager.instance.mousePosition))
             {
-                Move(transform.position, end);
+                canMove = false;
+                Vector3 end = GameManager.instance.mousePosition;
+                if (end.x < 0 || end.x > GameManager.instance.boardScript.rows - 1 || end.y < 0 || end.y > GameManager.instance.boardScript.columns - 1 || transform.position == end)
+                    return;
+                else
+                {
+                    Move(transform.position, end);
+                }
+                canMove = true;
             }
-            canMove = true;
         }
     }
 

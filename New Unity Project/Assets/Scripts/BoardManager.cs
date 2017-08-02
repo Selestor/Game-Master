@@ -15,7 +15,7 @@ public class BoardManager : MonoBehaviour {
     public GameObject[] obstacle;
 
     private Transform boardHolder;
-    private List<Vector3> gridPositions = new List<Vector3>();
+    public List<Vector3> gridPositions = new List<Vector3>();
 
     void InitializeList()
     {
