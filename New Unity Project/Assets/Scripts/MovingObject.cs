@@ -50,4 +50,7 @@ public abstract class MovingObject : MonoBehaviour {
             }
         }
     }
+
+    protected abstract void Attack<T>(T component)
+        where T : Component;
 }

@@ -1,0 +1,45 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy : MovingObject {
+
+    public int str = 0;
+    public int armor = 10;
+    public int healthPoints = 4;
+    public int moveRange = 4;
+
+    // Use this for initialization
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    // Update is called once per frame
+    void Update () {
+		
+	}
+
+    protected override void Attack<T>(T component)
+    {
+        /*Player target = component as Player;
+
+        int attack = UnityEngine.Random.Range(1, 20);
+        */
+    }
+
+    public void LoseHealth(int loss)
+    {
+        healthPoints -= loss;
+        CheckIfDead();
+    }
+
+    private void CheckIfDead()
+    {
+        if (healthPoints <= 0)
+        {
+            gameObject.SetActive(false);
+            print("Enemy died!");
+        }
+    }
+}
