@@ -31,7 +31,7 @@ public class Player : MovingObject {
             Vector3 pointerPosition = GameManager.instance.mousePosition;
             BoardManager boardManager = GameManager.instance.boardScript;
 
-            if (boardManager.gridPositions.Contains(pointerPosition)) // checking if skull
+            if (boardManager.gridFreePositions.Contains(pointerPosition)) // checking if skull
             {
                 Vector3 end = GameManager.instance.mousePosition;
                 if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)

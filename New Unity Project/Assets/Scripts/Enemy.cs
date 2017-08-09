@@ -39,6 +39,7 @@ public class Enemy : MovingObject {
         if (healthPoints <= 0)
         {
             gameObject.SetActive(false);
+            GameManager.instance.boardScript.gridFreePositions.Add(new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0));
             print("Enemy died!");
         }
     }

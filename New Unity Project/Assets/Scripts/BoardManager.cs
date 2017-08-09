@@ -16,16 +16,16 @@ public class BoardManager : MonoBehaviour {
     public GameObject[] enemy;
 
     private Transform boardHolder;
-    public List<Vector3> gridPositions = new List<Vector3>();
+    public List<Vector3> gridFreePositions = new List<Vector3>();
 
     void InitializeList()
     {
-        gridPositions.Clear();
+        gridFreePositions.Clear();
         for (int x = 0; x < columns; x++)
             for (int y = 0; y < rows; y++)
             {
                 if(x != 0 && y != 0)
-                    gridPositions.Add(new Vector3(x, y, 0f));
+                    gridFreePositions.Add(new Vector3(x, y, 0f));
             }
     }
 
@@ -61,9 +61,9 @@ public class BoardManager : MonoBehaviour {
     // random object on scene
     Vector3 RandomPosition()
     {
-        int randomIndex = Random.Range(0, gridPositions.Count);
-        Vector3 randomPosition = gridPositions[randomIndex];
-        gridPositions.RemoveAt(randomIndex);
+        int randomIndex = Random.Range(0, gridFreePositions.Count);
+        Vector3 randomPosition = gridFreePositions[randomIndex];
+        gridFreePositions.RemoveAt(randomIndex);
 
         return randomPosition;
     }
