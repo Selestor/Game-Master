@@ -31,7 +31,7 @@ public class Player : MovingObject {
             Vector3 pointerPosition = GameManager.instance.mousePosition;
             BoardManager boardManager = GameManager.instance.boardScript;
 
-            if (boardManager.gridFreePositions.Contains(pointerPosition)) // checking if skull
+            if (boardManager.gridFreePositions.Contains(pointerPosition) || pointerPosition.x == 0 || pointerPosition.y == 0) // checking if skull
             {
                 Vector3 end = GameManager.instance.mousePosition;
                 if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
@@ -53,25 +53,39 @@ public class Player : MovingObject {
                 Attack<Enemy>(hit.transform.GetComponent<Enemy>());
             }
         }
+
+        int horizontal = 0;
+        int vertical = 0;
+
+        horizontal = (int)Input.GetAxisRaw("Horizontal");
+        vertical = (int)Input.GetAxisRaw("Vertical");
+
+        if (horizontal != 0 || vertical != 0)
+            SimpleMove(horizontal, vertical);
     }
 
     protected override void Attack<T>(T component)
     {
         Enemy target = component as Enemy;
+        Vector3 targetLocation = target.transform.position;
 
-        int attack = UnityEngine.Random.Range(1, 20);
-        attack += str;
-
-        print("You attack " + component.name + ". Your attack score is " + attack + " vs target armor of " + target.armor);
-
-        if (attack >= target.armor)
+        if (CheckIfInRange(this.transform.position, targetLocation, 1))
         {
-            int damage = UnityEngine.Random.Range(1, 6);
-            damage += str;
-            print("You score a hit for " + damage + " damage!");
-            target.LoseHealth(damage);
+            int attack = UnityEngine.Random.Range(1, 20);
+            attack += str;
+
+            print("You attack " + component.name + ". Your attack score is " + attack + " vs target armor of " + target.armor);
+
+            if (attack >= target.armor)
+            {
+                int damage = UnityEngine.Random.Range(1, 6);
+                damage += str;
+                print("You score a hit for " + damage + " damage!");
+                target.LoseHealth(damage);
+            }
+            else print("Your attack missed.");
         }
-        else print("Your attack missed.");
+        else print("Target is out of range.");
     }
 
     private void CheckIfGameOver()
@@ -84,5 +98,13 @@ public class Player : MovingObject {
     {
         healthPoints -= loss;
         CheckIfGameOver();
+    }
+
+    public bool CheckIfInRange(Vector3 userPosition, Vector3 targetPosition, int weaponRange)
+    {
+        float distance = Mathf.Abs(targetPosition.x - userPosition.x) + Mathf.Abs(targetPosition.y - userPosition.y);
+
+        if (distance > weaponRange) return false;
+        else return true;
     }
 }

@@ -20,7 +20,7 @@ public class CameraMovement : MonoBehaviour {
         }
         */
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        /*if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
         }
@@ -35,6 +35,6 @@ public class CameraMovement : MonoBehaviour {
         if (Input.GetKey(KeyCode.UpArrow))
         {
             transform.position += new Vector3(0, speed * Time.deltaTime, 0);
-        }
+        }*/
     }
 }

@@ -23,10 +23,8 @@ public class BoardManager : MonoBehaviour {
         gridFreePositions.Clear();
         for (int x = 0; x < columns; x++)
             for (int y = 0; y < rows; y++)
-            {
-                if(x != 0 && y != 0)
-                    gridFreePositions.Add(new Vector3(x, y, 0f));
-            }
+                if (x != 0 && y != 0) gridFreePositions.Add(new Vector3(x, y, 0f));
+            
     }
 
     void BoardSetup()
@@ -42,11 +40,15 @@ public class BoardManager : MonoBehaviour {
                     toInstantiate = outerWall;
 
                 GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-                GameObject instance2 = Instantiate(toInstantiate2, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-                instance2.GetComponent<SpriteRenderer>().enabled = false;
-                
                 instance.transform.SetParent(boardHolder);
-                instance2.transform.SetParent(boardHolder);
+
+                if (x == -1 || y == -1 || x == columns || y == columns) continue;
+                else
+                {
+                    GameObject instance2 = Instantiate(toInstantiate2, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+                    instance2.GetComponent<SpriteRenderer>().enabled = false;
+                    instance2.transform.SetParent(boardHolder);
+                }
             }
     }
 
