@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null;
     public BoardManager boardScript;
+    public TurnManager turnScript;
 
     [HideInInspector]
     public bool playersTurn = true;
@@ -23,8 +24,10 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         boardScript = GetComponent<BoardManager>();
+        turnScript = GetComponent<TurnManager>();
 
         boardScript.SetupScene();
+        turnScript.RollInitiative();
 	}
 
     public void GameOver()

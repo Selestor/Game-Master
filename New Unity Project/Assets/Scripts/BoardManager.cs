@@ -9,13 +9,27 @@ public class BoardManager : MonoBehaviour {
     public int columns = 10;
     public int rows = 10;
 
+    public int enemies = 1;
+
     public GameObject[] floorTiles;
     public GameObject highlightTile;
     public GameObject outerWall;
     public GameObject[] obstacle;
-    public GameObject[] enemy;
+    public Enemy[] enemy;
+    public Player player;
 
     private Transform boardHolder;
+    private List<MovingObject> actors;
+    public void AddActor(MovingObject actor)
+    {
+        actors.Add(actor);
+    }
+
+    public List<MovingObject> ActorsList()
+    {
+        return actors;
+    }
+
     public List<Vector3> gridFreePositions = new List<Vector3>();
 
     void InitializeList()
@@ -54,10 +68,12 @@ public class BoardManager : MonoBehaviour {
 
     public void SetupScene()
     {
+        actors = new List<MovingObject>();
         BoardSetup();
         InitializeList();
-        LayoutObjectAtRandom(obstacle, 15, 15);
-        LayoutObjectAtRandom(enemy, 1, 1);
+        LayoutObjectAtRandom(obstacle, 15);
+        SpawnEnemyAtRandom(enemy, enemies);
+        AddActor(player);
     }
 
     // random object on scene
@@ -70,14 +86,25 @@ public class BoardManager : MonoBehaviour {
         return randomPosition;
     }
 
-    void LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum)
+    void LayoutObjectAtRandom(GameObject[] tileArray, int amount)
     {
-        int objectCount = Random.Range(minimum, maximum + 1);
-        for (int i = 0; i < objectCount; i++)
+        for (int i = 0; i < amount; i++)
         {
             Vector3 randomPosition = RandomPosition();
             GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
             Instantiate(tileChoice, randomPosition, Quaternion.identity);
+        }
+    }
+
+    void SpawnEnemyAtRandom(Enemy[] tileArray, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            Vector3 randomPosition = RandomPosition();
+            Enemy tileChoice = tileArray[Random.Range(0, tileArray.Length)];
+            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+            tileChoice.ID = i + 1;
+            AddActor(tileChoice);
         }
     }
 }

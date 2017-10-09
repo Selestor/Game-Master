@@ -13,6 +13,14 @@ public abstract class MovingObject : MonoBehaviour {
 
     private APathAlgorythm movingAlgorythm;
 
+    public int str = 0;
+    public int dex = 0;
+    public int baseArmor = 10;
+    public int healthPoints = 4;
+    public int moveRange = 4;
+    public abstract int ID
+    { get; set; }
+
     // Use this for initialization
     protected virtual void Start () {
 
@@ -20,7 +28,6 @@ public abstract class MovingObject : MonoBehaviour {
         rb2D = GetComponent<Rigidbody2D>();
         inverseMoveTime = 1f / moveTime;
         movingAlgorythm = gameObject.AddComponent(typeof(APathAlgorythm)) as APathAlgorythm;
-
     }
 
     protected void Move (Vector3 start, Vector3 end)
@@ -32,6 +39,23 @@ public abstract class MovingObject : MonoBehaviour {
         boxCollider.enabled = true;
         
         StartCoroutine(SmoothMovement(shortestPath));
+    }
+
+    protected IEnumerator SmoothMovement(List<Vector3> path)
+    {
+        path.RemoveAt(0);
+        foreach (Vector3 step in path)
+        {
+            float sqrRemainingDistance = (transform.position - step).sqrMagnitude;
+
+            while (sqrRemainingDistance > float.Epsilon)
+            {
+                Vector3 newPosition = Vector3.MoveTowards(rb2D.position, step, inverseMoveTime * Time.deltaTime);
+                rb2D.MovePosition(newPosition);
+                sqrRemainingDistance = (transform.position - step).sqrMagnitude;
+                yield return null;
+            }
+        }
     }
 
     protected virtual void SimpleMove(int xDir, int yDir)
@@ -63,22 +87,13 @@ public abstract class MovingObject : MonoBehaviour {
             yield return null;
         }
     }
-
-    protected IEnumerator SmoothMovement(List<Vector3> path)
+    
+    protected bool CheckIfInRange(Vector3 userPosition, Vector3 targetPosition, int weaponRange)
     {
-        path.RemoveAt(0);
-        foreach (Vector3 step in path)
-        {
-            float sqrRemainingDistance = (transform.position - step).sqrMagnitude;
+        float distance = Mathf.Abs(targetPosition.x - userPosition.x) + Mathf.Abs(targetPosition.y - userPosition.y);
 
-            while (sqrRemainingDistance > float.Epsilon)
-            {
-                Vector3 newPosition = Vector3.MoveTowards(rb2D.position, step, inverseMoveTime * Time.deltaTime);
-                rb2D.MovePosition(newPosition);
-                sqrRemainingDistance = (transform.position - step).sqrMagnitude;
-                yield return null;
-            }
-        }
+        if (distance > weaponRange) return false;
+        else return true;
     }
 
     protected abstract void Attack<T>(T component)

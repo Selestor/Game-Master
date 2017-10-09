@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MovingObject {
-
-    public int str = 0;
-    public int armor = 10;
-    public int healthPoints = 4;
-    public int moveRange = 4;
+    public override int ID
+    {
+        get;set;
+    }
 
     // Use this for initialization
     protected override void Start()
