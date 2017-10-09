@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MovingObject {
+    public override int ID
+    {
+        get;set;
+    }
 
-
-    public int str = 1;
-    public int armor = 12;
-    public int healthPoints = 8;
-    public int moveRange = 6;
-
-
-
-    //private Animator animator;
-	// Use this for initialization
-	protected override void Start () {
+    protected override void Start () {
         base.Start();
+        
+        str = 1;
+        dex = 1;
+        healthPoints = 8;
+        ID = 0;
+        moveRange = 6;
     }
 
     private void OnDisable()
@@ -69,14 +69,14 @@ public class Player : MovingObject {
         Enemy target = component as Enemy;
         Vector3 targetLocation = target.transform.position;
 
-        if (CheckIfInRange(this.transform.position, targetLocation, 1))
+        if (CheckIfInRange(transform.position, targetLocation, 1))
         {
             int attack = UnityEngine.Random.Range(1, 20);
             attack += str;
 
-            print("You attack " + component.name + ". Your attack score is " + attack + " vs target armor of " + target.armor);
+            print("You attack " + component.name + ". Your attack score is " + attack + " vs target armor of " + target.baseArmor);
 
-            if (attack >= target.armor)
+            if (attack >= target.baseArmor)
             {
                 int damage = UnityEngine.Random.Range(1, 6);
                 damage += str;
@@ -98,13 +98,5 @@ public class Player : MovingObject {
     {
         healthPoints -= loss;
         CheckIfGameOver();
-    }
-
-    public bool CheckIfInRange(Vector3 userPosition, Vector3 targetPosition, int weaponRange)
-    {
-        float distance = Mathf.Abs(targetPosition.x - userPosition.x) + Mathf.Abs(targetPosition.y - userPosition.y);
-
-        if (distance > weaponRange) return false;
-        else return true;
     }
 }
