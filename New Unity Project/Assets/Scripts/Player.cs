@@ -4,18 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MovingObject {
-    public override int ID
+    protected override void Start ()
     {
-        get;set;
-    }
-
-    protected override void Start () {
         base.Start();
         
         str = 1;
         dex = 1;
         healthPoints = 8;
-        ID = 0;
+        id = 0;
         moveRange = 6;
     }
 

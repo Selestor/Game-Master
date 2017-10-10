@@ -17,7 +17,7 @@ public class TurnManager : MonoBehaviour {
         foreach (MovingObject actor in actorList)
         {
             TurnKeeper turn = new TurnKeeper();
-            turn.actorId = actor.ID;
+            turn.actorId = actor.id;
             turn.actorInitiative = actor.dex + UnityEngine.Random.Range(1, 20);
             combatQueue.Add(turn);
         }

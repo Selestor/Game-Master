@@ -18,8 +18,8 @@ public abstract class MovingObject : MonoBehaviour {
     public int baseArmor = 10;
     public int healthPoints = 4;
     public int moveRange = 4;
-    public abstract int ID
-    { get; set; }
+
+    public int id;
 
     // Use this for initialization
     protected virtual void Start () {

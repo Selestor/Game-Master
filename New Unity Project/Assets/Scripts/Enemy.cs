@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MovingObject {
-    public override int ID
-    {
-        get;set;
-    }
+public class Enemy : MovingObject
+{
 
     // Use this for initialization
     protected override void Start()
@@ -15,9 +12,10 @@ public class Enemy : MovingObject {
     }
 
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update()
+    {
+
+    }
 
     protected override void Attack<T>(T component)
     {

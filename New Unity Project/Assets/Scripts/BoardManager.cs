@@ -19,6 +19,7 @@ public class BoardManager : MonoBehaviour {
     public Player player;
 
     private Transform boardHolder;
+
     private List<MovingObject> actors;
     public void AddActor(MovingObject actor)
     {
@@ -96,15 +97,21 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
-    void SpawnEnemyAtRandom(Enemy[] tileArray, int amount)
+    void SpawnEnemyAtRandom(Enemy[] enemyArray, int amount)
     {
         for (int i = 0; i < amount; i++)
         {
             Vector3 randomPosition = RandomPosition();
-            Enemy tileChoice = tileArray[Random.Range(0, tileArray.Length)];
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
-            tileChoice.ID = i + 1;
-            AddActor(tileChoice);
+
+            Enemy enemyClone = enemyArray[Random.Range(0, enemyArray.Length)];
+            enemyClone = Instantiate(enemyClone, randomPosition, Quaternion.identity);
+            enemyClone.GetComponent<Enemy>().id = i + 1;
+            AddActor(enemyClone);
+            /*
+            Enemy enemyClone = enemyArray[Random.Range(0, enemyArray.Length)];
+            Instantiate(enemyClone, randomPosition, Quaternion.identity);
+            AddActor(enemyClone);
+            */
         }
     }
 }
