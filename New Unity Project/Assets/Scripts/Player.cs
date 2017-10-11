@@ -11,8 +11,9 @@ public class Player : MovingObject {
         str = 1;
         dex = 1;
         healthPoints = 8;
-        id = 0;
+        baseArmor = 10;
         moveRange = 6;
+        id = 0;
     }
 
     private void OnDisable()
@@ -22,42 +23,49 @@ public class Player : MovingObject {
     
     void Update ()
     {
-        if (Input.GetMouseButtonDown(0))
+        //transform.position = new Vector3() { x = 0, y = 0 };
+        if (GameManager.instance.WhosTurn() == id)
         {
-            Vector3 pointerPosition = GameManager.instance.mousePosition;
-            BoardManager boardManager = GameManager.instance.boardScript;
-
-            if (boardManager.gridFreePositions.Contains(pointerPosition) || pointerPosition.x == 0 || pointerPosition.y == 0) // checking if skull
+            if (Input.GetMouseButtonDown(0))
             {
-                Vector3 end = GameManager.instance.mousePosition;
-                if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
-                    return;
-                else
+                Vector3 pointerPosition = GameManager.instance.mousePosition;
+                BoardManager boardManager = GameManager.instance.boardScript;
+
+                if (boardManager.gridFreePositions.Contains(pointerPosition) || pointerPosition.x == 0 || pointerPosition.y == 0) // checking if skull
                 {
-                    Move(transform.position, end);
+                    Vector3 end = GameManager.instance.mousePosition;
+                    if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
+                        return;
+                    else
+                    {
+                        Move(transform.position, end);
+                    }
                 }
             }
-        }
 
-        if(Input.GetMouseButtonDown(1))
-        {
-            Vector3 pointerPosition = GameManager.instance.mousePosition;
-            int layerMask = 1 << 8;
-            RaycastHit2D hit = Physics2D.Linecast(pointerPosition, pointerPosition, layerMask);
-            if(hit && hit.transform.name == "Enemy(Clone)")
+            if (Input.GetMouseButtonDown(1))
             {
-                Attack<Enemy>(hit.transform.GetComponent<Enemy>());
+                Vector3 pointerPosition = GameManager.instance.mousePosition;
+                int layerMask = 1 << 8;
+                RaycastHit2D hit = Physics2D.Linecast(pointerPosition, pointerPosition, layerMask);
+                if (hit && hit.transform.name == "Enemy(Clone)")
+                {
+                    Attack<Enemy>(hit.transform.GetComponent<Enemy>());
+                }
             }
+
+            if(Input.GetKeyDown("space"))
+                GameManager.instance.turnScript.EndTurn();
+
+            int horizontal = 0;
+            int vertical = 0;
+
+            horizontal = (int)Input.GetAxisRaw("Horizontal");
+            vertical = (int)Input.GetAxisRaw("Vertical");
+
+            if (horizontal != 0 || vertical != 0)
+                SimpleMove(horizontal, vertical);
         }
-
-        int horizontal = 0;
-        int vertical = 0;
-
-        horizontal = (int)Input.GetAxisRaw("Horizontal");
-        vertical = (int)Input.GetAxisRaw("Vertical");
-
-        if (horizontal != 0 || vertical != 0)
-            SimpleMove(horizontal, vertical);
     }
 
     protected override void Attack<T>(T component)

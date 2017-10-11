@@ -3,10 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour {
-    public int whosTurn;
+    public class TurnKeeper
+    {
+        public int actorId;
+        public int actorInitiative;
+    }
 
     private List<MovingObject> actorList;
-    private List<TurnKeeper> combatQueue;
+    public List<TurnKeeper> combatQueue;
+
+    private int whosTurn_queueIndex;
+    private int whosTurn_id = -1;
+
+    public void SetQueueIndex(int i)
+    {
+        whosTurn_queueIndex = i;
+    }
+
+    public void SetWhosTurn()
+    {
+        whosTurn_id = combatQueue[whosTurn_queueIndex].actorId;
+        GameManager.instance.SetWhosTurn(whosTurn_id);
+    }
+
+    public void EndTurn()
+    {
+        int howManyLeft = combatQueue.Count;
+        if (whosTurn_queueIndex < howManyLeft - 1)
+            whosTurn_queueIndex++;
+        else whosTurn_queueIndex = 0;
+        SetWhosTurn();
+    }
 
     public void RollInitiative()
     {
@@ -22,12 +49,12 @@ public class TurnManager : MonoBehaviour {
             combatQueue.Add(turn);
         }
 
-        combatQueue.Sort((p,q) => p.actorInitiative);
+        combatQueue.Sort((p, q) => p.actorInitiative.CompareTo(q.actorInitiative));
+        combatQueue.Reverse();
     }
 
-    public class TurnKeeper
+    public void RemoveFromQueue(int id)
     {
-        public int actorId;
-        public int actorInitiative;
+        combatQueue.Remove(new TurnKeeper() { actorId = id });
     }
 }

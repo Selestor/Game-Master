@@ -39,10 +39,22 @@ public class APathAlgorythm : MonoBehaviour {
             return this.parent;
         }
 
+        public void RemoveChild(TreeNode child)
+        {
+            TreeNode childToRemove = FindChild(child.node);
+            childToRemove = null;
+        }
+
+        public void ChangeParent(TreeNode root,TreeNode newParent)
+        {
+            TreeNode oldParent = root.FindChild(parent.node);
+            oldParent.RemoveChild(this);
+            parent = newParent;
+        }
+
         public void AddChild(TreeNode child)
         {
             children.Add(child);
-            child.parent = this;
         }
 
         public TreeNode FindChild(Vector3 child)
@@ -58,10 +70,8 @@ public class APathAlgorythm : MonoBehaviour {
                     if (searchedChild.node.Equals(child)) return searchedChild;
                 }
             }
-
             return searchedChild;
         }
-
     }
 
 
@@ -116,32 +126,33 @@ public class APathAlgorythm : MonoBehaviour {
         List<Vector3> walkableAdjectentSquares = new List<Vector3>();
         walkableAdjectentSquares = AdjecentSquares(current);
 
-        foreach (Vector3 square in walkableAdjectentSquares)
+        foreach (Vector3 walkableSqare in walkableAdjectentSquares)
         {
-            if (closedList.Contains(square))
+            if (closedList.Contains(walkableSqare))
                 continue;
-            if(!openList.Contains(square))
+            if(!openList.Contains(walkableSqare))
             {
                 TreeNode node = new TreeNode();
-                node.node = square;
+                node.node = walkableSqare;
                 node.SetParent(treeRoot.FindChild(current));
                 treeRoot.FindChild(current).AddChild(node);
 
-                pathScoring[Mathf.RoundToInt(square.x), Mathf.RoundToInt(square.y)] = CalculatePathScore(node);
+                pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)] = CalculatePathScore(walkableSqare, current);
 
-                openList.Add(square);
+                openList.Add(walkableSqare);
             }
             else
             {
-                TreeNode node = new TreeNode();
-                node.node = square;
-                node.SetParent(treeRoot.FindChild(current));
-                treeRoot.FindChild(current).AddChild(node);
+                Vector3 newScore = CalculatePathScore(walkableSqare, current);
 
-                Vector3 newScore = CalculatePathScore(node);
-                if(newScore.y < pathScoring[Mathf.RoundToInt(square.x), Mathf.RoundToInt(square.y)].y)
+                float newG = newScore.y;
+                float oldH = pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)].z;
+                float oldF = pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)].x;
+
+                float newF = newG + oldH;
+                if (newF < oldF)
                 {
-                    treeRoot.FindChild(square).SetParent(treeRoot.FindChild(current));
+                    treeRoot.FindChild(walkableSqare).SetParent(treeRoot.FindChild(current));
                 }
             }
         }
@@ -169,7 +180,7 @@ public class APathAlgorythm : MonoBehaviour {
          return adjecentSquares;
     }
 
-    private Vector3 CalculatePathScore(TreeNode treeNode)
+    /*private Vector3 CalculatePathScore(TreeNode treeNode)
     {
         int xParent = Mathf.RoundToInt(treeNode.GetParent().node.x);
         int yParent = Mathf.RoundToInt(treeNode.GetParent().node.y);
@@ -179,6 +190,25 @@ public class APathAlgorythm : MonoBehaviour {
 
         float G = pathScoring[xParent, yParent].y + 1;
         float H = Mathf.Abs(destination.x - x) + Mathf.Abs(destination.y - y); 
+        float F = Mathf.RoundToInt(G + H);
+
+        Vector3 score = new Vector3();
+        score.x = F;
+        score.y = G;
+        score.z = H;
+        return score;
+    }*/
+
+    private Vector3 CalculatePathScore(Vector3 square, Vector3 parent)
+    {
+        int xParent = Mathf.RoundToInt(parent.x);
+        int yParent = Mathf.RoundToInt(parent.y);
+
+        int x = Mathf.RoundToInt(square.x);
+        int y = Mathf.RoundToInt(square.y);
+
+        float G = pathScoring[xParent, yParent].y + 1;
+        float H = Mathf.Abs(destination.x - x) + Mathf.Abs(destination.y - y);
         float F = Mathf.RoundToInt(G + H);
 
         Vector3 score = new Vector3();

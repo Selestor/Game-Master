@@ -73,7 +73,7 @@ public class BoardManager : MonoBehaviour {
         BoardSetup();
         InitializeList();
         LayoutObjectAtRandom(obstacle, 15);
-        SpawnEnemyAtRandom(enemy, enemies);
+        //SpawnEnemyAtRandom(enemy, enemies);
         AddActor(player);
     }
 
@@ -107,11 +107,6 @@ public class BoardManager : MonoBehaviour {
             enemyClone = Instantiate(enemyClone, randomPosition, Quaternion.identity);
             enemyClone.GetComponent<Enemy>().id = i + 1;
             AddActor(enemyClone);
-            /*
-            Enemy enemyClone = enemyArray[Random.Range(0, enemyArray.Length)];
-            Instantiate(enemyClone, randomPosition, Quaternion.identity);
-            AddActor(enemyClone);
-            */
         }
     }
 }

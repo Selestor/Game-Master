@@ -9,12 +9,22 @@ public class Enemy : MovingObject
     protected override void Start()
     {
         base.Start();
+
+        str = 0;
+        dex = 0;
+        healthPoints = 4;
+        baseArmor = 10;
+        moveRange = 4;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(GameManager.instance.WhosTurn() == id)
+        {
+            print("It was my turn, id = " + id);
+            GameManager.instance.turnScript.EndTurn();
+        }
     }
 
     protected override void Attack<T>(T component)
@@ -38,6 +48,7 @@ public class Enemy : MovingObject
             gameObject.SetActive(false);
             GameManager.instance.boardScript.gridFreePositions.Add(new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0));
             print("Enemy died!");
+            GameManager.instance.turnScript.RemoveFromQueue(this.id);
         }
     }
 }

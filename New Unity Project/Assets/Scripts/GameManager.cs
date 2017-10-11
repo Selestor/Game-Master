@@ -14,8 +14,18 @@ public class GameManager : MonoBehaviour {
     public Vector3 playerPosition;
     public List<Vector3> shortestPath;
 
-	// Use this for initialization
-	void Awake () {
+    private int whosTurn;
+    public int WhosTurn()
+    {
+        return whosTurn;
+    }
+    public void SetWhosTurn(int id)
+    {
+        whosTurn = id;
+    }
+
+    // Use this for initialization
+    void Awake () {
         if (instance == null)
             instance = this;
         else if (instance != this)
@@ -24,11 +34,17 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         boardScript = GetComponent<BoardManager>();
-        turnScript = GetComponent<TurnManager>();
-
         boardScript.SetupScene();
+
+        turnScript = GetComponent<TurnManager>();
         turnScript.RollInitiative();
+        turnScript.SetQueueIndex(0);
+        turnScript.SetWhosTurn();
+
+        whosTurn = WhosTurn();
 	}
+
+
 
     public void GameOver()
     {

@@ -13,11 +13,11 @@ public abstract class MovingObject : MonoBehaviour {
 
     private APathAlgorythm movingAlgorythm;
 
-    public int str = 0;
-    public int dex = 0;
-    public int baseArmor = 10;
-    public int healthPoints = 4;
-    public int moveRange = 4;
+    public int str;
+    public int dex;
+    public int baseArmor;
+    public int healthPoints;
+    public int moveRange;
 
     public int id;
 
