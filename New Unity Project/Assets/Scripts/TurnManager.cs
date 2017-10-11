@@ -55,6 +55,7 @@ public class TurnManager : MonoBehaviour {
 
     public void RemoveFromQueue(int id)
     {
-        combatQueue.Remove(new TurnKeeper() { actorId = id });
+        TurnKeeper x = combatQueue.Find(r => r.actorId == id);
+        combatQueue.Remove(x);
     }
 }

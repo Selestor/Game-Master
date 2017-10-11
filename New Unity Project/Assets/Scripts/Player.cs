@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MovingObject {
+    public bool action = true;
+    public int movementLeft;
+
     protected override void Start ()
     {
         base.Start();
@@ -14,6 +17,8 @@ public class Player : MovingObject {
         baseArmor = 10;
         moveRange = 6;
         id = 0;
+        movementLeft = 6;
+        action = true;
     }
 
     private void OnDisable()
@@ -26,7 +31,7 @@ public class Player : MovingObject {
         //transform.position = new Vector3() { x = 0, y = 0 };
         if (GameManager.instance.WhosTurn() == id)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && movementLeft > 0)
             {
                 Vector3 pointerPosition = GameManager.instance.mousePosition;
                 BoardManager boardManager = GameManager.instance.boardScript;
@@ -38,25 +43,33 @@ public class Player : MovingObject {
                         return;
                     else
                     {
-                        Move(transform.position, end);
+                        movementLeft = Move(transform.position, end, movementLeft);
                     }
                 }
             }
 
             if (Input.GetMouseButtonDown(1))
             {
-                Vector3 pointerPosition = GameManager.instance.mousePosition;
-                int layerMask = 1 << 8;
-                RaycastHit2D hit = Physics2D.Linecast(pointerPosition, pointerPosition, layerMask);
-                if (hit && hit.transform.name == "Enemy(Clone)")
+                if (action)
                 {
-                    Attack<Enemy>(hit.transform.GetComponent<Enemy>());
+                    Vector3 pointerPosition = GameManager.instance.mousePosition;
+                    int layerMask = 1 << 8;
+                    RaycastHit2D hit = Physics2D.Linecast(pointerPosition, pointerPosition, layerMask);
+                    if (hit && hit.transform.name == "Enemy(Clone)")
+                    {
+                        Attack<Enemy>(hit.transform.GetComponent<Enemy>());
+                    }
                 }
+                else print("You already attacked this turn.");
             }
 
-            if(Input.GetKeyDown("space"))
+            if (Input.GetKeyDown("space"))
+            {
                 GameManager.instance.turnScript.EndTurn();
-
+                movementLeft = moveRange;
+                action = true;
+                print("You finished your turn.");
+            }
             int horizontal = 0;
             int vertical = 0;
 
@@ -64,7 +77,10 @@ public class Player : MovingObject {
             vertical = (int)Input.GetAxisRaw("Vertical");
 
             if (horizontal != 0 || vertical != 0)
+            {
                 SimpleMove(horizontal, vertical);
+                movementLeft--;
+            }
         }
     }
 
@@ -88,6 +104,7 @@ public class Player : MovingObject {
                 target.LoseHealth(damage);
             }
             else print("Your attack missed.");
+            action = false;
         }
         else print("Target is out of range.");
     }

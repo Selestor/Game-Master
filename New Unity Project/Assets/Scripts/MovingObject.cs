@@ -30,15 +30,22 @@ public abstract class MovingObject : MonoBehaviour {
         movingAlgorythm = gameObject.AddComponent(typeof(APathAlgorythm)) as APathAlgorythm;
     }
 
-    protected void Move (Vector3 start, Vector3 end)
+    protected int Move (Vector3 start, Vector3 end, int movementLeft)
     {
         List<Vector3> shortestPath = new List<Vector3>();
 
         boxCollider.enabled = false;
         shortestPath = movingAlgorythm.ReturnShortestPath(start, end);
         boxCollider.enabled = true;
-        
+
+        if (shortestPath.Count - 1 >= movementLeft)
+        {
+            shortestPath.RemoveRange(movementLeft + 1, shortestPath.Count - movementLeft - 1);
+            movementLeft = 0;
+        }
+        else movementLeft = movementLeft - (shortestPath.Count - 1);
         StartCoroutine(SmoothMovement(shortestPath));
+        return movementLeft;
     }
 
     protected IEnumerator SmoothMovement(List<Vector3> path)

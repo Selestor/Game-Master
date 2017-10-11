@@ -73,7 +73,7 @@ public class BoardManager : MonoBehaviour {
         BoardSetup();
         InitializeList();
         LayoutObjectAtRandom(obstacle, 15);
-        //SpawnEnemyAtRandom(enemy, enemies);
+        SpawnEnemyAtRandom(enemy, enemies);
         AddActor(player);
     }
 
