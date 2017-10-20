@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance = null;
     public BoardManager boardScript;
     public TurnManager turnScript;
+    public WeaponManager weaponScript;
 
     [HideInInspector]
     public bool playersTurn = true;
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviour {
         turnScript.SetWhosTurn();
 
         whosTurn = WhosTurn();
+
+        weaponScript = GetComponent<WeaponManager>();
 	}
 
 

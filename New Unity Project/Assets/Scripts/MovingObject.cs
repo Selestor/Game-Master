@@ -10,6 +10,7 @@ public abstract class MovingObject : MonoBehaviour {
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
     private float inverseMoveTime;
+    public bool isMoving;
 
     private APathAlgorythm movingAlgorythm;
 
@@ -18,6 +19,7 @@ public abstract class MovingObject : MonoBehaviour {
     public int baseArmor;
     public int healthPoints;
     public int moveRange;
+    public int equippedWeaponId;
 
     public int id;
 
@@ -28,6 +30,7 @@ public abstract class MovingObject : MonoBehaviour {
         rb2D = GetComponent<Rigidbody2D>();
         inverseMoveTime = 1f / moveTime;
         movingAlgorythm = gameObject.AddComponent(typeof(APathAlgorythm)) as APathAlgorythm;
+        isMoving = false;
     }
 
     protected int Move (Vector3 start, Vector3 end, int movementLeft)
@@ -50,6 +53,7 @@ public abstract class MovingObject : MonoBehaviour {
 
     protected IEnumerator SmoothMovement(List<Vector3> path)
     {
+        isMoving = true;
         path.RemoveAt(0);
         foreach (Vector3 step in path)
         {
@@ -63,6 +67,7 @@ public abstract class MovingObject : MonoBehaviour {
                 yield return null;
             }
         }
+        isMoving = false;
     }
 
     protected virtual void SimpleMove(int xDir, int yDir)

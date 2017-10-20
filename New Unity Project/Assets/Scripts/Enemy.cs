@@ -15,6 +15,7 @@ public class Enemy : MovingObject
         healthPoints = 4;
         baseArmor = 10;
         moveRange = 4;
+        equippedWeaponId = UnityEngine.Random.Range(0, 1);
     }
 
     // Update is called once per frame
