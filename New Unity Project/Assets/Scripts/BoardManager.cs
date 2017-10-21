@@ -18,6 +18,8 @@ public class BoardManager : MonoBehaviour {
     public Enemy[] enemy;
     public Player player;
 
+    public List<Vector3> gridFreePositions = new List<Vector3>();
+
     private Transform boardHolder;
 
     private List<MovingObject> actors;
@@ -31,14 +33,14 @@ public class BoardManager : MonoBehaviour {
         return actors;
     }
 
-    public List<Vector3> gridFreePositions = new List<Vector3>();
-
     void InitializeList()
     {
         gridFreePositions.Clear();
         for (int x = 0; x < columns; x++)
             for (int y = 0; y < rows; y++)
+            {
                 if (x != 0 && y != 0) gridFreePositions.Add(new Vector3(x, y, 0f));
+            }
             
     }
 

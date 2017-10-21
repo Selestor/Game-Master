@@ -106,8 +106,9 @@ public class APathAlgorythm : MonoBehaviour {
             bottom = bottom.GetParent();
             SP.Add(bottom.node);
         }
-
-        return Reverse(SP);
+        SP = Reverse(SP);
+        SP.RemoveAt(0);
+        return SP;
     }
 
     private void CalculateShortestPath(Vector3 end)
@@ -207,7 +208,12 @@ public class APathAlgorythm : MonoBehaviour {
         int x = Mathf.RoundToInt(square.x);
         int y = Mathf.RoundToInt(square.y);
 
-        float G = pathScoring[xParent, yParent].y + 1;
+        RaycastHit2D puddleHit = Physics2D.Linecast(square, square, 1 << LayerMask.NameToLayer("Obstacle"));
+
+        float G = pathScoring[xParent, yParent].y;
+        if (puddleHit.transform == null) G += +1;
+        else G += GameManager.instance.puddleCost;
+        
         float H = Mathf.Abs(destination.x - x) + Mathf.Abs(destination.y - y);
         float F = Mathf.RoundToInt(G + H);
 
@@ -215,6 +221,7 @@ public class APathAlgorythm : MonoBehaviour {
         score.x = F;
         score.y = G;
         score.z = H;
+
         return score;
     }
 

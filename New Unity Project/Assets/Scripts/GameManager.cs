@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
     public BoardManager boardScript;
     public TurnManager turnScript;
     public WeaponManager weaponScript;
+    public int puddleCost = 4;
 
     [HideInInspector]
     public bool playersTurn = true;
@@ -46,8 +47,6 @@ public class GameManager : MonoBehaviour {
 
         weaponScript = GetComponent<WeaponManager>();
 	}
-
-
 
     public void GameOver()
     {

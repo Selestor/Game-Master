@@ -37,21 +37,27 @@ public class Player : MovingObject {
         {
             if (!isMoving)
             {
-                if (Input.GetMouseButtonDown(0) && movementLeft > 0)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    Vector3 pointerPosition = GameManager.instance.mousePosition;
-                    BoardManager boardManager = GameManager.instance.boardScript;
-
-                    if (boardManager.gridFreePositions.Contains(pointerPosition) || pointerPosition.x == 0 || pointerPosition.y == 0) // checking if skull
+                    if (movementLeft > 0)
                     {
-                        Vector3 end = GameManager.instance.mousePosition;
-                        if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
-                            return;
-                        else
+                        Vector3 pointerPosition = GameManager.instance.mousePosition;
+                        BoardManager boardManager = GameManager.instance.boardScript;
+
+                        RaycastHit2D skullHit = Physics2D.Linecast(pointerPosition, pointerPosition, 1 << LayerMask.NameToLayer("BlockingLayer"));
+                        if (skullHit.transform == null) // checking if skull
                         {
-                            movementLeft = Move(transform.position, end, movementLeft);
+                            Vector3 end = GameManager.instance.mousePosition;
+                            if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
+                                return;
+                            else
+                            {
+                                movementLeft = Move(transform.position, end, movementLeft);
+                            }
                         }
+                        else print("You cant move here.");
                     }
+                    else print("You cant move this turn.");
                 }
 
                 if (Input.GetMouseButtonDown(1))
@@ -92,8 +98,11 @@ public class Player : MovingObject {
 
                 if (horizontal != 0 || vertical != 0)
                 {
-                    SimpleMove(horizontal, vertical);
-                    movementLeft--;
+                    if (movementLeft > 0)
+                    {
+                        movementLeft = SimpleMove(horizontal, vertical, movementLeft);
+                    }
+                    else print("You cant move this turn");
                 }
             }
         }

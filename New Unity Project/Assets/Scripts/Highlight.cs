@@ -8,7 +8,6 @@ public class Highlight : MonoBehaviour {
     void OnMouseEnter()
     {
         GetComponent<SpriteRenderer>().enabled = true;
-        GameManager.instance.mousePosition = gameObject.transform.position;
     }
     void OnMouseExit()
     {
