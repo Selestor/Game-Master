@@ -118,22 +118,54 @@ public class Player : MovingObject {
 
         if (CheckIfInRange(transform.position, targetLocation, weapon.range))
         {
+            int modifier = 0;
+            if (weapon.attribute == "str") modifier = str;
+            if (weapon.attribute == "dex") modifier = dex;
             int attack = UnityEngine.Random.Range(1, 20);
-            attack += str;
+            attack += modifier;
 
             print("You attack " + component.name + ". Your attack score is " + attack + " vs target armor of " + target.baseArmor);
 
+            Vector3 offset = new Vector3();
             if (attack >= target.baseArmor)
             {
                 int damage = UnityEngine.Random.Range(weapon.minDamage, weapon.maxDamage);
-                damage += str;
+                damage += modifier;
+                offset.x = 0;
+                offset.y = 0;
                 print("You score a hit for " + damage + " damage!");
                 target.LoseHealth(damage);
             }
-            else print("Your attack missed.");
-            action = false;
-        }
-        else print("Target is out of range.");
+            else
+            {
+                if (weapon.weaponId == 0)
+                {
+                    int randX = 0;
+                    int randY = 0;
+                    while (randX == 0 && randY == 0)
+                    {
+                        randX = UnityEngine.Random.Range(-1, 1);
+                        randY = UnityEngine.Random.Range(-1, 1);
+                    }
+                    offset.x = 0 + randX;
+                    offset.y = 0 + randY;
+                }
+                print("Your attack missed.");
+            }
+
+                //SPAWN ARROW
+                if (weapon.weaponId == 0)
+                {
+                    Vector3 location = targetLocation + offset;
+                    float angle = Vector3.Angle(new Vector3(0, 1, 0), location - transform.position);
+                    if (location.x > transform.position.x) angle = -angle;
+                    GameObject arrow = Instantiate(GameManager.instance.weaponScript.arrowPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, angle)));
+                    arrow.GetComponent<Arrow>().target = location;
+                }
+
+                action = false;
+            }
+            else print("Target is out of range.");
     }
 
     private void SwapWeapon()
