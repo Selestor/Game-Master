@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MovingObject {
-    public bool action = true;
-    public int movementLeft;
-
     protected override void Start ()
     {
         base.Start();
@@ -35,7 +32,7 @@ public class Player : MovingObject {
         //transform.position = new Vector3() { x = 0, y = 0 };
         if (GameManager.instance.WhosTurn() == id)
         {
-            if (!isMoving)
+            if (!GameManager.instance.isAnythingMoving)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -179,7 +176,10 @@ public class Player : MovingObject {
     private void CheckIfGameOver()
     {
         if (healthPoints <= 0)
+        {
             GameManager.instance.GameOver();
+            Destroy(gameObject);
+        }
     }
 
     public void LoseHealth(int loss)

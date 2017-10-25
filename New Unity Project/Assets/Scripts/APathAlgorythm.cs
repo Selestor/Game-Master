@@ -254,4 +254,18 @@ public class APathAlgorythm : MonoBehaviour {
 
         return reversedList;
     }
+
+    public int ReturnPathMovementCost(List<Vector3> path)
+    {
+        int movementCost = 0;
+
+        foreach(Vector3 square in path)
+        {
+            RaycastHit2D puddleHit = Physics2D.Linecast(square, square, 1 << LayerMask.NameToLayer("Obstacle"));
+            if (puddleHit.transform == null) movementCost++;
+            else movementCost += 4;
+        }
+
+        return movementCost;
+    }
 }

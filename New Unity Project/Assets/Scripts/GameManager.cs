@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
     public int puddleCost = 4;
 
     [HideInInspector]
-    public bool playersTurn = true;
+    public bool isAnythingMoving = false;
+
     public Vector3 mousePosition;
     public Vector3 playerPosition;
     public List<Vector3> shortestPath;
