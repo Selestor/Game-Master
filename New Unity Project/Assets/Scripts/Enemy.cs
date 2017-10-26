@@ -17,9 +17,16 @@ public class Enemy : MovingObject
         
         int randomNumber = UnityEngine.Random.Range(0, 2);
         equippedWeaponId = randomNumber;
-
+        
         movementLeft = moveRange;
         action = true;
+
+        WeaponInformation();
+    }
+
+    public void WeaponInformation()
+    { 
+        weapon = GameManager.instance.weaponScript.weaponList.Find(i => i.weaponId == equippedWeaponId);
     }
 
     // Update is called once per frame
@@ -27,11 +34,12 @@ public class Enemy : MovingObject
     {
         if(GameManager.instance.WhosTurn() == id)
         {
+            Player player = GameObject.FindWithTag("Player").transform.GetComponent<Player>();
+            bool isPlayerInRange = CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange());
             if (!GameManager.instance.isAnythingMoving)
             {
                 //attack
-                Player player = GameObject.FindWithTag("Player").transform.GetComponent<Player>();
-                if (CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange()) && action) Attack<Player>(player);
+                if (isPlayerInRange && action) Attack<Player>(player);
                 else
                 {
                     //move to player
@@ -39,8 +47,10 @@ public class Enemy : MovingObject
                     destination = DestinationPoint();
                     movementLeft = Move(transform.position, destination, movementLeft);
                 }
-                if (CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange()) && action) Attack<Player>(player);
-                EndEnemyTurn();
+                if ((isPlayerInRange && action == false) || (action == true && !HasMovementLeft() && !isPlayerInRange && !GameManager.instance.isAnythingMoving))
+                {
+                    EndEnemyTurn();
+                }
             }
         }
     }
@@ -53,55 +63,77 @@ public class Enemy : MovingObject
         movementLeft = moveRange;
     }
 
+    private bool HasMovementLeft()
+    {
+        RaycastHit2D hit = Physics2D.Linecast(transform.position, transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+        if(hit.transform == null)
+        {
+            if (movementLeft == 0) return false;
+            else return true;
+        }
+        else
+        {
+            if (movementLeft < GameManager.instance.puddleCost) return false;
+            else return true;
+        }
+    }
+
     private Vector3 DestinationPoint()
     {
         Vector3 playerPosition = new Vector3();
         playerPosition = GameManager.instance.playerPosition;
-
         int distanceFromPlayer;
-        distanceFromPlayer = Mathf.RoundToInt(Mathf.Abs(transform.position.x - playerPosition.x) + Mathf.Abs(transform.position.y - playerPosition.y));
-        if (distanceFromPlayer > 1)
+        distanceFromPlayer = DistanceFromPlayer(transform.position);
+
+        if (distanceFromPlayer > weapon.range)
         {
             Vector3 destination = new Vector3();
-            List<Vector3> adjecentSquares = new List<Vector3>();
+            List<Vector3> listAdjecentSquares = new List<Vector3>();
 
-            int[] distances = new int[4];
-            int iter = 0;
-            for (int i = -1; i < 2; i++)
-                for (int j = -1; j < 2; j++)
+            List<int> listDistances = new List<int>();
+            for (int i = -weapon.range; i <= weapon.range; i++)
+                for (int j = -weapon.range; j <= weapon.range; j++)
                 {
-                    if (Mathf.Abs(i) != Mathf.Abs(j))
+                    float x = playerPosition.x + i;
+                    float y = playerPosition.y + j;
+                    if ((Mathf.Abs(i) + Mathf.Abs(j)) == weapon.range && x >=0 && y >= 0)
                     {
                         Vector3 possibleSquare = new Vector3();
-                        possibleSquare.x = playerPosition.x + i;
-                        possibleSquare.y = playerPosition.y + j;
+                        possibleSquare.x = x;
+                        possibleSquare.y = y;
                         RaycastHit2D hit = Physics2D.Linecast(possibleSquare, possibleSquare, 1 << LayerMask.NameToLayer("BlockingLayer"));
                         if (hit.transform == null)
                         {
-                            adjecentSquares.Add(possibleSquare);
+                            listAdjecentSquares.Add(possibleSquare);
                             int distance;
                             List<Vector3> shortestPath = new List<Vector3>();
                             shortestPath = GetShortestPath(transform.position, possibleSquare);
                             distance = movingAlgorythm.ReturnPathMovementCost(shortestPath);
-                            distances[iter] = distance;
-                            iter++;
+                            listDistances.Add(distance);
                         }
                     }
                 }
 
-            int smallestDistance = distances[0];
+            int smallestDistance = listDistances[0];
             int id = 0;
-            for (int j = 0; j < iter; j++)
+            for (int i = 0; i < listDistances.Count; i++)
             {
-                if (smallestDistance > distances[j])
-                    id = j;
+                if (smallestDistance > listDistances[i])
+                    id = i;
             }
-
-            destination = adjecentSquares[id];
+            destination = listAdjecentSquares[id];
 
             return destination;
         }
         else return transform.position;
+    }
+
+    private int DistanceFromPlayer(Vector3 square)
+    {
+        Vector3 playerPosition = new Vector3();
+        playerPosition = GameManager.instance.playerPosition;
+        int distanceFromPlayer = Mathf.RoundToInt(Mathf.Abs(square.x - playerPosition.x) + Mathf.Abs(square.y - playerPosition.y));
+        return distanceFromPlayer;
     }
 
     public void LoseHealth(int loss)
@@ -125,9 +157,6 @@ public class Enemy : MovingObject
     {
         Player target = component as Player;
         Vector3 targetLocation = target.transform.position;
-
-        WeaponManager.Weapon weapon = new WeaponManager.Weapon();
-        weapon = GameManager.instance.weaponScript.weaponList.Find(i => i.weaponId == equippedWeaponId);
 
         if (CheckIfInRange(transform.position, targetLocation, weapon.range))
         {

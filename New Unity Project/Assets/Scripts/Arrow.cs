@@ -7,12 +7,17 @@ public class Arrow : MonoBehaviour {
 
     public void Shoot()
     {
+        GameManager.instance.isAnythingMoving = true;
         transform.position = Vector3.MoveTowards(transform.position, target, 10 * Time.deltaTime);
     }
 
     private void Update()
     {
         Shoot();
-        if (transform.position == target) Destroy(gameObject);
+        if (transform.position == target)
+        {
+            Destroy(gameObject);
+            GameManager.instance.isAnythingMoving = false;
+        }
     }
 }

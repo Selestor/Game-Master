@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
+        weaponScript = GetComponent<WeaponManager>();
+        weaponScript.PopulateWeaponList();
+
         boardScript = GetComponent<BoardManager>();
         boardScript.SetupScene();
 
@@ -45,8 +48,6 @@ public class GameManager : MonoBehaviour {
         turnScript.SetWhosTurn();
 
         whosTurn = WhosTurn();
-
-        weaponScript = GetComponent<WeaponManager>();
 	}
 
     public void GameOver()

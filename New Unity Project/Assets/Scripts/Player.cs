@@ -12,7 +12,7 @@ public class Player : MovingObject {
         dex = 1;
         healthPoints = 8;
         baseArmor = 10;
-        moveRange = 6;
+        moveRange = 5;
 
         equippedWeaponId = 1;
 

@@ -15,8 +15,9 @@ public class WeaponManager : MonoBehaviour {
         public int maxDamage = 6;
         public string attribute = "name";
     }
+    
 
-    private void Start()
+    public void PopulateWeaponList()
     {
         weaponList.Add(new Weapon() { weaponId = 0, name = "Bow", minDamage = 1, maxDamage = 4, range = 6, attribute = "dex" });
         weaponList.Add(new Weapon() { weaponId = 1, name = "Sword", minDamage = 1, maxDamage = 6, range = 1, attribute = "str" });

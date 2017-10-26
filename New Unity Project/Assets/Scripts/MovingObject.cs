@@ -19,6 +19,8 @@ public abstract class MovingObject : MonoBehaviour {
     public int baseArmor;
     public int healthPoints;
     public int moveRange;
+
+    public WeaponManager.Weapon weapon;
     public int equippedWeaponId;
 
     public int id;
