@@ -34,19 +34,20 @@ public class Enemy : MovingObject
     {
         if(GameManager.instance.WhosTurn() == id)
         {
-            Player player = GameObject.FindWithTag("Player").transform.GetComponent<Player>();
-            bool isPlayerInRange = CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange());
             if (!GameManager.instance.isAnythingMoving)
             {
+                Player player;
+                if (GameObject.FindWithTag("Player") == null) return;
+                else player = GameObject.FindWithTag("Player").transform.GetComponent<Player>();
+                bool isPlayerInRange = CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange());
+
+                //move to player
+                Vector3 destination = new Vector3();
+                destination = DestinationPoint();
+                movementLeft = Move(transform.position, destination, movementLeft);
+
                 //attack
                 if (isPlayerInRange && action) Attack<Player>(player);
-                else
-                {
-                    //move to player
-                    Vector3 destination = new Vector3();
-                    destination = DestinationPoint();
-                    movementLeft = Move(transform.position, destination, movementLeft);
-                }
                 if ((isPlayerInRange && action == false) || (action == true && !HasMovementLeft() && !isPlayerInRange && !GameManager.instance.isAnythingMoving))
                 {
                     EndEnemyTurn();
@@ -96,7 +97,7 @@ public class Enemy : MovingObject
                 {
                     float x = playerPosition.x + i;
                     float y = playerPosition.y + j;
-                    if ((Mathf.Abs(i) + Mathf.Abs(j)) == weapon.range && x >=0 && y >= 0)
+                    if ((Mathf.Abs(i) + Mathf.Abs(j)) == weapon.range && x >=0 && y >= 0 && x < GameManager.instance.boardScript.columns && y < GameManager.instance.boardScript.rows)
                     {
                         Vector3 possibleSquare = new Vector3();
                         possibleSquare.x = x;
@@ -108,22 +109,35 @@ public class Enemy : MovingObject
                             int distance;
                             List<Vector3> shortestPath = new List<Vector3>();
                             shortestPath = GetShortestPath(transform.position, possibleSquare);
-                            distance = movingAlgorythm.ReturnPathMovementCost(shortestPath);
-                            listDistances.Add(distance);
+                            if (shortestPath.Count > 0)
+                            {
+                                distance = movingAlgorythm.ReturnPathMovementCost(shortestPath);
+                                listDistances.Add(distance);
+                            }
+                            else listAdjecentSquares.Remove(possibleSquare);
                         }
                     }
                 }
 
-            int smallestDistance = listDistances[0];
-            int id = 0;
-            for (int i = 0; i < listDistances.Count; i++)
+            //without this condition, enemies who has no good place to go <especally if melee> will return error
+            if (listDistances.Count > 0)
             {
-                if (smallestDistance > listDistances[i])
-                    id = i;
-            }
-            destination = listAdjecentSquares[id];
+                int smallestDistance = listDistances[0];
+                int id = 0;
+                for (int i = 0; i < listDistances.Count; i++)
+                {
+                    if (smallestDistance > listDistances[i])
+                        id = i;
+                }
+                destination = listAdjecentSquares[id];
 
-            return destination;
+                return destination;
+            }
+            else
+            {
+                movementLeft = 0;
+                return transform.position;
+            }
         }
         else return transform.position;
     }

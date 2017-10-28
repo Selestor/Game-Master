@@ -100,6 +100,12 @@ public class APathAlgorythm : MonoBehaviour {
 
         TreeNode bottom = new TreeNode();
         bottom = treeRoot.FindChild(destination);
+        if (bottom.node.x == -9999)
+        {
+            bottom.node.x = transform.position.x;
+            bottom.node.y = transform.position.y;
+            bottom.node.z = transform.position.z;
+        }
         SP.Add(bottom.node);
         while (bottom.GetParent() != null)
         {

@@ -10,7 +10,7 @@ public class Player : MovingObject {
         
         str = 1;
         dex = 1;
-        healthPoints = 8;
+        healthPoints = 80;
         baseArmor = 10;
         moveRange = 5;
 
