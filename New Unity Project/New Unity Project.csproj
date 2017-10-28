@@ -89,6 +89,8 @@
     <Compile Include="Assets\Scripts\MovingObject.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\TurnManager.cs" />
+    <Compile Include="Assets\Scripts\UIScripts\LoadSceneOnClick.cs" />
+    <Compile Include="Assets\Scripts\UIScripts\QuitOnClick.cs" />
     <Compile Include="Assets\Scripts\WeaponManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
