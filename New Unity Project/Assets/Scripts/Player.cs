@@ -2,54 +2,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MovingObject {
+    public Text healthText;
+    public Text movementText;
+    public Text weaponText;
+    public Text actionText;
+
     protected override void Start ()
     {
         base.Start();
-        
-        str = 1;
-        dex = 1;
-        healthPoints = 80;
-        baseArmor = 10;
-        moveRange = 5;
-
-        equippedWeaponId = 1;
-
-        id = 0;
-
-        movementLeft = 6;
-        action = true;
-    }
-
-    private void OnDisable()
-    {
-        //tutaj jakby cos sie zmienialo, np poziom gry
+        WeaponInformation();
     }
     
+    private void UpdateUI()
+    {
+        healthText.text = "Health: " + healthPoints;
+        movementText.text = "Movement: " + movementLeft;
+        weaponText.text = "Weapon: " + weapon.name;
+        if (action) actionText.text = "Action: -ready-";
+        if (!action) actionText.text = "Action: -none-";
+    }
+
     void Update ()
     {
-        //transform.position = new Vector3() { x = 0, y = 0 };
+        UpdateUI();
         if (GameManager.instance.WhosTurn() == id)
         {
+            Vector3 pointerPosition = GameManager.instance.mousePosition;
             if (!GameManager.instance.isAnythingMoving)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
                     if (movementLeft > 0)
                     {
-                        Vector3 pointerPosition = GameManager.instance.mousePosition;
                         BoardManager boardManager = GameManager.instance.boardScript;
-
                         RaycastHit2D skullHit = Physics2D.Linecast(pointerPosition, pointerPosition, 1 << LayerMask.NameToLayer("BlockingLayer"));
                         if (skullHit.transform == null) // checking if skull
                         {
-                            Vector3 end = GameManager.instance.mousePosition;
-                            if (end.x < 0 || end.x > boardManager.rows - 1 || end.y < 0 || end.y > boardManager.columns - 1 || transform.position == end)
+                            if (pointerPosition.x < 0 || pointerPosition.x > boardManager.rows - 1 || pointerPosition.y < 0 || pointerPosition.y > boardManager.columns - 1 || transform.position == pointerPosition)
                                 return;
                             else
                             {
-                                movementLeft = Move(transform.position, end, movementLeft);
+                                movementLeft = Move(transform.position, pointerPosition, movementLeft);
                             }
                         }
                         else print("You cant move here.");
@@ -61,7 +57,6 @@ public class Player : MovingObject {
                 {
                     if (action)
                     {
-                        Vector3 pointerPosition = GameManager.instance.mousePosition;
                         int layerMask = 1 << 8;
                         RaycastHit2D hit = Physics2D.Linecast(pointerPosition, pointerPosition, layerMask);
                         if (hit && hit.transform.name == "Enemy(Clone)")
@@ -74,10 +69,7 @@ public class Player : MovingObject {
 
                 if (Input.GetKeyDown("space"))
                 {
-                    GameManager.instance.turnScript.EndTurn();
-                    movementLeft = moveRange;
-                    action = true;
-                    print("You finished your turn.");
+                    EndTurn("Player finished his turn.");
                 }
                 if (Input.GetKeyDown(KeyCode.Q))
                 {
@@ -87,6 +79,8 @@ public class Player : MovingObject {
                     }
                     else print("You cant swap weapon this turn.");
                 }
+
+                /* Moving with arrows
                 int horizontal = 0;
                 int vertical = 0;
 
@@ -101,7 +95,16 @@ public class Player : MovingObject {
                     }
                     else print("You cant move this turn");
                 }
+                */
             }
+        }
+    }
+
+    public void EndPlayerTurn()
+    {
+        if (GameManager.instance.WhosTurn() == id)
+        {
+            EndTurn("Player finished his turn.");
         }
     }
 
@@ -169,8 +172,9 @@ public class Player : MovingObject {
     {
         if (equippedWeaponId == 0) equippedWeaponId = 1;
         else equippedWeaponId = 0;
-        print("You equipped weapon " +  equippedWeaponId);
+        //print("You equipped weapon " +  equippedWeaponId);
         action = false;
+        WeaponInformation();
     }
 
     private void CheckIfGameOver()
@@ -178,6 +182,8 @@ public class Player : MovingObject {
         if (healthPoints <= 0)
         {
             GameManager.instance.GameOver();
+            UpdateUI();
+            healthText.text = "DEAD";
             Destroy(gameObject);
         }
     }

@@ -5,11 +5,6 @@ using UnityEngine;
 public class Arrow : MonoBehaviour {
     public Vector3 target;
 
-    private void Start()
-    {
-        //GameManager.instance.isAnythingMoving = true;
-    }
-
     public void Shoot()
     {
         transform.position = Vector3.MoveTowards(transform.position, target, 10 * Time.deltaTime);
@@ -20,7 +15,6 @@ public class Arrow : MonoBehaviour {
         Shoot();
         if (transform.position == target)
         {
-            //GameManager.instance.isAnythingMoving = false;
             Destroy(gameObject);
         }
     }

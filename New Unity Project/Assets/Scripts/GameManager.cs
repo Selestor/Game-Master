@@ -54,4 +54,22 @@ public class GameManager : MonoBehaviour {
     {
         enabled = false;
     }
+
+    private void Update()
+    {
+        DetectMousePosition();
+    }
+
+    private void DetectMousePosition()
+    {
+        Vector3 camPosition = Camera.main.transform.position;
+
+        Vector3 mp = Input.mousePosition;
+        mp.z = -10;
+        mousePosition = Camera.main.ScreenToWorldPoint(mp);
+        
+        mousePosition.x = Mathf.Round(mousePosition.x);
+        mousePosition.y = Mathf.Round(mousePosition.y);
+        mousePosition.z = 0;
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,13 +9,6 @@ public class Enemy : MovingObject
     protected override void Start()
     {
         base.Start();
-
-        str = 0;
-        dex = 0;
-        healthPoints = 4;
-        baseArmor = 10;
-        moveRange = 4;
-        
         int randomNumber = UnityEngine.Random.Range(0, 2);
         equippedWeaponId = randomNumber;
         
@@ -24,10 +18,7 @@ public class Enemy : MovingObject
         WeaponInformation();
     }
 
-    public void WeaponInformation()
-    { 
-        weapon = GameManager.instance.weaponScript.weaponList.Find(i => i.weaponId == equippedWeaponId);
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -50,18 +41,10 @@ public class Enemy : MovingObject
                 if (isPlayerInRange && action) Attack<Player>(player);
                 if ((isPlayerInRange && action == false) || (action == true && !HasMovementLeft() && !isPlayerInRange && !GameManager.instance.isAnythingMoving))
                 {
-                    EndEnemyTurn();
+                    EndTurn("Enemy nr " + id + " finished.");
                 }
             }
         }
-    }
-
-    private void EndEnemyTurn()
-    {
-        print("It was my turn, id = " + id);
-        GameManager.instance.turnScript.EndTurn();
-        action = true;
-        movementLeft = moveRange;
     }
 
     private bool HasMovementLeft()

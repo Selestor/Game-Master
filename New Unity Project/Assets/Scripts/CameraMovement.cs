@@ -7,20 +7,18 @@ public class CameraMovement : MonoBehaviour {
     public float speed = 5.0f;
     void Update()
     {
-        /* scrolling
         if(Input.GetAxis("Mouse ScrollWheel") > 0f) //scroll down
         {
-            if (transform.position.z < -5)
-                transform.position += new Vector3(0, 0, 1);
+            if (Camera.main.orthographicSize > 5)
+                Camera.main.orthographicSize--;
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) //scroll up
         {
-            if (transform.position.z > -15)
-                transform.position -= new Vector3(0, 0, 1);
+            if (Camera.main.orthographicSize < 10)
+                Camera.main.orthographicSize++;
         }
-        */
 
-        /*if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
         }
@@ -35,6 +33,6 @@ public class CameraMovement : MonoBehaviour {
         if (Input.GetKey(KeyCode.UpArrow))
         {
             transform.position += new Vector3(0, speed * Time.deltaTime, 0);
-        }*/
+        }
     }
 }

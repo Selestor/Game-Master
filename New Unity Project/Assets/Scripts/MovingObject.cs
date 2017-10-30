@@ -38,6 +38,11 @@ public abstract class MovingObject : MonoBehaviour {
         isMoving = false;
     }
 
+    protected void WeaponInformation()
+    {
+        weapon = GameManager.instance.weaponScript.weaponList.Find(i => i.weaponId == equippedWeaponId);
+    }
+
     protected List<Vector3> GetShortestPath(Vector3 start, Vector3 end)
     {
         List<Vector3> shortestPath = new List<Vector3>();
@@ -171,4 +176,12 @@ public abstract class MovingObject : MonoBehaviour {
 
     protected abstract void Attack<T>(T component)
         where T : Component;
+    
+    protected void EndTurn(string text)
+    {
+        GameManager.instance.turnScript.EndTurn();
+        print(text);
+        action = true;
+        movementLeft = moveRange;
+    }
 }
