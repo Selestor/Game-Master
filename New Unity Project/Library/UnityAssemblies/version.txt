@@ -1,5 +1,5 @@
 2017.1.0p4:2.8.0.0
-StandaloneWindows
+StandaloneLinux
 P:/UNITY/Editor/Data/Managed/UnityEditor.dll
 P:/UNITY/Editor/Data/Managed/UnityEngine.dll
 P:/UNITY/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
