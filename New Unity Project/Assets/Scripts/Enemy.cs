@@ -147,6 +147,10 @@ public class Enemy : MovingObject
             GameManager.instance.boardScript.gridFreePositions.Add(new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0));
             print("Enemy died!");
             GameManager.instance.turnScript.RemoveFromQueue(this.id);
+            if(GameManager.instance.turnScript.CheckIfPlayerWin())
+            {
+                GameManager.instance.GameOver();
+            }
         }
     }
 

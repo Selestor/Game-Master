@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -17,6 +18,9 @@ public class GameManager : MonoBehaviour {
     public Vector3 playerPosition;
     public List<Vector3> shortestPath;
 
+    public GameObject menuPanel;
+    public bool paused;
+
     private int whosTurn;
     public int WhosTurn()
     {
@@ -27,37 +31,75 @@ public class GameManager : MonoBehaviour {
         whosTurn = id;
     }
 
+    private void Start()
+    {
+        Unpause();
+    }
+
     // Use this for initialization
     void Awake () {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
+        if (SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            if (instance == null)
+                instance = this;
+            else if (instance != this)
+                Destroy(gameObject);
 
-        DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
 
-        weaponScript = GetComponent<WeaponManager>();
-        weaponScript.PopulateWeaponList();
+            weaponScript = GetComponent<WeaponManager>();
+            weaponScript.PopulateWeaponList();
 
-        boardScript = GetComponent<BoardManager>();
-        boardScript.SetupScene();
+            boardScript = GetComponent<BoardManager>();
+            boardScript.SetupScene();
 
-        turnScript = GetComponent<TurnManager>();
-        turnScript.RollInitiative();
-        turnScript.SetQueueIndex(0);
-        turnScript.SetWhosTurn();
+            turnScript = GetComponent<TurnManager>();
+            turnScript.RollInitiative();
+            turnScript.SetQueueIndex(0);
+            turnScript.SetWhosTurn();
 
-        whosTurn = WhosTurn();
+            whosTurn = WhosTurn();
+        }
 	}
 
     public void GameOver()
     {
-        enabled = false;
+        Pause();
+    }
+
+    public void Quit()
+    {
+        Destroy(gameObject);
     }
 
     private void Update()
     {
         DetectMousePosition();
+        if (Input.GetKeyDown("escape"))
+        {
+            if (paused == true)
+            {
+                Unpause();
+            }
+            else
+            {
+                Pause();
+            }
+        }
+    }
+
+    private void Pause()
+    {
+        Time.timeScale = 0.0f;
+        menuPanel.SetActive(true);
+        paused = true;
+    }
+
+    public void Unpause()
+    {
+        Time.timeScale = 1.0f;
+        menuPanel.SetActive(false);
+        paused = false;
     }
 
     private void DetectMousePosition()

@@ -9,7 +9,7 @@ public class Player : MovingObject {
     public Text movementText;
     public Text weaponText;
     public Text actionText;
-
+    
     protected override void Start ()
     {
         base.Start();
@@ -33,7 +33,7 @@ public class Player : MovingObject {
             Vector3 pointerPosition = GameManager.instance.mousePosition;
             if (!GameManager.instance.isAnythingMoving)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && !GameManager.instance.paused)
                 {
                     if (movementLeft > 0)
                     {

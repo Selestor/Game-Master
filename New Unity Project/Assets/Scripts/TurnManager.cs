@@ -35,6 +35,16 @@ public class TurnManager : MonoBehaviour {
         SetWhosTurn();
     }
 
+    public bool CheckIfPlayerWin()
+    {
+        bool didPlayerWin = false;
+
+        if (combatQueue.Count == 1 && combatQueue[0].actorId == 0)
+            didPlayerWin = true;
+
+        return didPlayerWin;
+    }
+
     public void RollInitiative()
     {
         actorList = new List<MovingObject>();
