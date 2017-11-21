@@ -146,7 +146,7 @@ public class APathAlgorythm : MonoBehaviour {
 
                 pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)] = CalculatePathScore(walkableSqare, current);
 
-                openList.Add(walkableSqare);
+                openList.Insert(0, walkableSqare);
             }
             else
             {
@@ -219,7 +219,7 @@ public class APathAlgorythm : MonoBehaviour {
         float G = pathScoring[xParent, yParent].y;
         if (puddleHit.transform == null) G += +1;
         else G += GameManager.instance.puddleCost;
-        
+
         float H = Mathf.Abs(destination.x - x) + Mathf.Abs(destination.y - y);
         float F = Mathf.RoundToInt(G + H);
 
