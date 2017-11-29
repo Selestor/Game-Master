@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MovingObject
 {
@@ -33,18 +34,28 @@ public class Enemy : MovingObject
                 bool isPlayerInRange = CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange());
 
                 //move to player
-                Vector3 destination = new Vector3();
-                destination = DestinationPoint();
-                movementLeft = Move(transform.position, destination, movementLeft);
-
+                if (!isPlayerInRange)
+                {
+                    Vector3 destination = new Vector3();
+                    destination = DestinationPoint();
+                    movementLeft = Move(transform.position, destination, movementLeft);
+                }
                 //attack
                 if (isPlayerInRange && action) Attack<Player>(player);
                 if ((isPlayerInRange && action == false) || (action == true && !HasMovementLeft() && !isPlayerInRange && !GameManager.instance.isAnythingMoving))
                 {
+                    StartCoroutine(Delay());
                     EndTurn("Enemy nr " + id + " finished.");
                 }
             }
         }
+    }
+
+    IEnumerator Delay()
+    {
+        GameManager.instance.isAnythingMoving = true;
+        yield return new WaitForSecondsRealtime(1);
+        GameManager.instance.isAnythingMoving = false;
     }
 
     private bool HasMovementLeft()
@@ -135,6 +146,7 @@ public class Enemy : MovingObject
 
     public void LoseHealth(int loss)
     {
+        FloatingTextController.CreateFloatingText(loss.ToString(), transform);
         healthPoints -= loss;
         CheckIfDead();
     }
@@ -194,6 +206,7 @@ public class Enemy : MovingObject
                     offset.y = 0 + randY;
                 }
                 print("Your attack missed.");
+                FloatingTextController.CreateFloatingText("Miss", target.transform);
             }
 
             //SPAWN ARROW

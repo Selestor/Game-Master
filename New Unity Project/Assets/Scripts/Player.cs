@@ -151,6 +151,7 @@ public class Player : MovingObject {
                     offset.y = 0 + randY;
                 }
                 print("Your attack missed.");
+                FloatingTextController.CreateFloatingText("Miss", target.transform);
             }
 
                 //SPAWN ARROW
@@ -190,6 +191,7 @@ public class Player : MovingObject {
 
     public void LoseHealth(int loss)
     {
+        FloatingTextController.CreateFloatingText(loss.ToString(), transform);
         healthPoints -= loss;
         CheckIfGameOver();
     }

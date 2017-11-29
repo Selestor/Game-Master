@@ -34,7 +34,7 @@ public class TurnManager : MonoBehaviour {
         else whosTurn_queueIndex = 0;
         SetWhosTurn();
     }
-
+    
     public bool CheckIfPlayerWin()
     {
         bool didPlayerWin = false;

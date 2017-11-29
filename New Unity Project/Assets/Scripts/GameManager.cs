@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour {
 
             DontDestroyOnLoad(gameObject);
 
+            FloatingTextController.Initialize();
+
             weaponScript = GetComponent<WeaponManager>();
             weaponScript.PopulateWeaponList();
 

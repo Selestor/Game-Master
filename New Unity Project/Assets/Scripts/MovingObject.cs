@@ -61,21 +61,7 @@ public abstract class MovingObject : MonoBehaviour {
 
 
         shortestPath = GetShortestPath(start, end);
-        /*
-        boxCollider.enabled = false;
-        shortestPath = movingAlgorythm.ReturnShortestPath(start, end);
-        boxCollider.enabled = true;
-        */
-        /*
-        if (shortestPath.Count - 1 >= movementLeft)
-        {
-            shortestPath.RemoveRange(movementLeft + 1, shortestPath.Count - movementLeft - 1);
-            movementLeft = 0;
-        }
-        else movementLeft = movementLeft - (shortestPath.Count - 1);
-        StartCoroutine(SmoothMovement(shortestPath));
-        return movementLeft;
-        */
+
         RaycastHit2D puddleHit = Physics2D.Linecast(transform.position, transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
         int movementCost;
         if (puddleHit.transform == null) movementCost = 1;
