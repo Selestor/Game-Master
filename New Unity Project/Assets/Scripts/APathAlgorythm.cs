@@ -144,7 +144,8 @@ public class APathAlgorythm : MonoBehaviour {
                 node.SetParent(treeRoot.FindChild(current));
                 treeRoot.FindChild(current).AddChild(node);
 
-                pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)] = CalculatePathScore(walkableSqare, current);
+                pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)]
+                    = CalculatePathScore(walkableSqare, current);
 
                 openList.Insert(0, walkableSqare);
             }
@@ -153,8 +154,10 @@ public class APathAlgorythm : MonoBehaviour {
                 Vector3 newScore = CalculatePathScore(walkableSqare, current);
 
                 float newG = newScore.y;
-                float oldH = pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)].z;
-                float oldF = pathScoring[Mathf.RoundToInt(walkableSqare.x), Mathf.RoundToInt(walkableSqare.y)].x;
+                float oldH = pathScoring[Mathf.RoundToInt(walkableSqare.x), 
+                    Mathf.RoundToInt(walkableSqare.y)].z;
+                float oldF = pathScoring[Mathf.RoundToInt(walkableSqare.x), 
+                    Mathf.RoundToInt(walkableSqare.y)].x;
 
                 float newF = newG + oldH;
                 if (newF < oldF)

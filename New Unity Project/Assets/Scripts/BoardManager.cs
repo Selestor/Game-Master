@@ -51,21 +51,21 @@ public class BoardManager : MonoBehaviour {
         for (int x = -1; x < columns+1; x++)
             for (int y = -1; y < rows+1; y++)
             {
-                GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)]; // losuje 1 floor tile
-                GameObject toInstantiate2 = highlightTile;
+                GameObject toInstantiate;
                 if (x == -1 || y == -1 || x == columns || y == columns)
                     toInstantiate = outerWall;
-
-                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-                instance.transform.SetParent(boardHolder);
-
-                if (x == -1 || y == -1 || x == columns || y == columns) continue;
                 else
                 {
-                    GameObject instance2 = Instantiate(toInstantiate2, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+                    toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject toInstantiate2 = highlightTile;
+                    GameObject instance2 = Instantiate(toInstantiate2,
+                        new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
                     instance2.GetComponent<SpriteRenderer>().enabled = false;
                     instance2.transform.SetParent(boardHolder);
                 }
+                GameObject instance = Instantiate(toInstantiate,
+                    new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+                instance.transform.SetParent(boardHolder);
             }
     }
 

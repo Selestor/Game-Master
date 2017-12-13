@@ -11,14 +11,4 @@ public class Highlight : MonoBehaviour {
             GetComponent<SpriteRenderer>().enabled = true;
         else GetComponent<SpriteRenderer>().enabled = false;
     }
-    /*
-    void OnMouseEnter()
-    {
-        GetComponent<SpriteRenderer>().enabled = true;
-    }
-    void OnMouseExit()
-    {
-        GetComponent<SpriteRenderer>().enabled = false;
-    }
-    */
 }

@@ -18,10 +18,7 @@ public class Enemy : MovingObject
 
         WeaponInformation();
     }
-
-
-
-    // Update is called once per frame
+    
     void Update()
     {
         if(GameManager.instance.WhosTurn() == id)
@@ -31,7 +28,8 @@ public class Enemy : MovingObject
                 Player player;
                 if (GameObject.FindWithTag("Player") == null) return;
                 else player = GameObject.FindWithTag("Player").transform.GetComponent<Player>();
-                bool isPlayerInRange = CheckIfInRange(transform.position, GameManager.instance.playerPosition, GetWeaponRange());
+                bool isPlayerInRange = CheckIfInRange(transform.position, 
+                    GameManager.instance.playerPosition, GetWeaponRange());
 
                 //move to player
                 if (!isPlayerInRange)
@@ -42,7 +40,9 @@ public class Enemy : MovingObject
                 }
                 //attack
                 if (isPlayerInRange && action) Attack<Player>(player);
-                if ((isPlayerInRange && action == false) || (action == true && !HasMovementLeft() && !isPlayerInRange && !GameManager.instance.isAnythingMoving))
+                if ((isPlayerInRange && action == false) || 
+                    (action == true && !HasMovementLeft() && 
+                    !isPlayerInRange && !GameManager.instance.isAnythingMoving))
                 {
                     StartCoroutine(Delay());
                     EndTurn("Enemy nr " + id + " finished.");
@@ -91,12 +91,15 @@ public class Enemy : MovingObject
                 {
                     float x = playerPosition.x + i;
                     float y = playerPosition.y + j;
-                    if ((Mathf.Abs(i) + Mathf.Abs(j)) == weapon.range && x >=0 && y >= 0 && x < GameManager.instance.boardScript.columns && y < GameManager.instance.boardScript.rows)
+                    if ((Mathf.Abs(i) + Mathf.Abs(j)) == weapon.range && x >=0 && y >= 0 &&
+                        x < GameManager.instance.boardScript.columns && 
+                        y < GameManager.instance.boardScript.rows)
                     {
                         Vector3 possibleSquare = new Vector3();
                         possibleSquare.x = x;
                         possibleSquare.y = y;
-                        RaycastHit2D hit = Physics2D.Linecast(possibleSquare, possibleSquare, 1 << LayerMask.NameToLayer("BlockingLayer"));
+                        RaycastHit2D hit = Physics2D.Linecast(possibleSquare, possibleSquare, 
+                            1 << LayerMask.NameToLayer("BlockingLayer"));
                         if (hit.transform == null)
                         {
                             listAdjecentSquares.Add(possibleSquare);
@@ -113,7 +116,6 @@ public class Enemy : MovingObject
                     }
                 }
 
-            //without this condition, enemies who has no good place to go <especally if melee> will return error
             if (listDistances.Count > 0)
             {
                 int smallestDistance = listDistances[0];
