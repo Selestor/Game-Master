@@ -192,7 +192,8 @@ public class Player : MovingObject {
     public void LoseHealth(int loss)
     {
         FloatingTextController.CreateFloatingText(loss.ToString(), transform);
-        healthPoints -= loss;
+        //healthPoints -= loss;
+        healthPoints -= 0;
         CheckIfGameOver();
     }
 }

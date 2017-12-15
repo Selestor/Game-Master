@@ -267,12 +267,15 @@ public class APathAlgorythm : MonoBehaviour {
     public int ReturnPathMovementCost(List<Vector3> path)
     {
         int movementCost = 0;
+        Vector3 parent = new Vector3();
+        parent = gameObject.transform.position;
 
         foreach(Vector3 square in path)
         {
-            RaycastHit2D puddleHit = Physics2D.Linecast(square, square, 1 << LayerMask.NameToLayer("Obstacle"));
+            RaycastHit2D puddleHit = Physics2D.Linecast(parent, parent, 1 << LayerMask.NameToLayer("Obstacle"));
             if (puddleHit.transform == null) movementCost++;
-            else movementCost += 4;
+            else movementCost += GameManager.instance.puddleCost;
+            parent = square;
         }
 
         return movementCost;
