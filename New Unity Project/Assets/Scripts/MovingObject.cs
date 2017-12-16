@@ -101,7 +101,7 @@ public abstract class MovingObject : MonoBehaviour {
         GameManager.instance.isAnythingMoving = false;
         if (this.tag == "Player") GameManager.instance.playerPosition = transform.position;
     }
-
+    /*
     protected virtual int SimpleMove(int xDir, int yDir, int movementLeft)
     {
         Vector2 start = transform.position;
@@ -128,7 +128,7 @@ public abstract class MovingObject : MonoBehaviour {
         else print("You cant move this turn.");
         return movementLeft;
     }
-
+    */
     protected IEnumerator SimpleSmoothMovement(Vector3 end)
     {
         GameManager.instance.isAnythingMoving = true;

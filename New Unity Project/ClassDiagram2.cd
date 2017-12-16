@@ -57,7 +57,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="CameraMovement" Collapsed="true">
-    <Position X="6.5" Y="3.5" Width="1.5" />
+    <Position X="6.5" Y="3.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\CameraMovement.cs</FileName>
@@ -71,11 +71,11 @@
     </TypeIdentifier>
   </Class>
   <Class Name="FloatingTextController" Collapsed="true">
-    <Position X="6.5" Y="5" Width="1.5" />
+    <Position X="6.5" Y="5" Width="2" />
     <AssociationLine Name="popupText" Type="FloatingText" FixedFromPoint="true">
       <Path>
-        <Point X="7.25" Y="5.691" />
-        <Point X="7.25" Y="6.25" />
+        <Point X="7.5" Y="5.691" />
+        <Point X="7.5" Y="6.25" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
